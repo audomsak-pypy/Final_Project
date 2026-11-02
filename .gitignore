@@ -3,3 +3,9 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 .ipynb_checkpoints/
+
+data/*.db
+data/*.building.db
+data/processed/*.csv
+tests/artifacts/
+*.log

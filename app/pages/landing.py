@@ -1,0 +1,5 @@
+from dash import html
+from app.components.common import action,footer
+
+def render():
+    return html.Div([html.Section([html.Div('ผู้จัดทำ: [ชื่อผู้จัดทำ]',className='byline'),html.Div([html.Div([html.P('DATA / EVIDENCE / PERSPECTIVE',className='eyebrow'),html.H1('Adidur'),html.P('มองข้อมูลให้ชัด ก่อนเชื่อ ก่อนแชร์',className='tagline')]),html.Div([html.Span('จริง'),html.Span('หรือ'),html.Span('เฟค')],className='truth')],className='hero-grid'),html.Div([html.H2('AI ข่าวปลอม และภัยออนไลน์'),html.P('มองโลก เปรียบเทียบไทย · สำรวจเหตุการณ์ ข่าวที่ถูกตรวจสอบ และความเสียหาย พร้อมหลักฐานที่ตรวจสอบย้อนกลับได้'),action('สำรวจ Dashboard →','tab','1',className='primary')],className='hero-copy'),html.P('รายวิชา: Basic Programming for Data Scientist and Data Visualization',className='course')],className='hero'),html.Div([html.Div([html.Strong('01'),html.P('โลกบันทึกอะไร')]),html.Div([html.Strong('02'),html.P('ไทยเผชิญอะไร')]),html.Div([html.Strong('03'),html.P('ข้อมูลบอกอะไรได้จริง')])],className='intro-grid'),footer()])

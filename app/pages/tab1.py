@@ -1,0 +1,21 @@
+from dash import html
+from app import queries as q,figures as f
+from app.state import be,display_date
+from app.components.common import *
+
+def news_card(row,label,feature=False):
+    if row is None:return html.Div([html.P(label),html.P('มีข่าวไม่พอสำหรับตำแหน่งนี้ · ไม่ทำรายการซ้ำ')],className='news-card empty')
+    verdict=row.verdict_en
+    return html.Article([html.P(label,className='eyebrow'),html.Span(row.verdict_th,className='verdict '+('distorted' if verdict=='Distorted' else 'fake')),html.H3(row.title),html.P(f'{display_date(row.date)} · {row.category_th}'),html.Span(f.LABELS[row.ai_level],className='tag'),html.P(f'{row.view_count:,} ครั้ง',className='views'),html.P(row.evidence_snippet,className='snippet'),html.A('เปิดข่าวต้นทาง ↗',href=row.url,target='_blank',rel='noopener noreferrer'),action('เน้นในตารางหลักฐาน','select',row.post_id)],className='news-card'+(' featured' if feature else ''))
+def render(s,states,dark):
+    ai=q.aiid(s);af=q.afnc(s);ac=q.acsc(s);panel_data=q.acsc_panel(s);cases,loss,ratio=q.totals(ac)
+    yes=q.totals(q.acsc(s,True));no=q.totals(q.acsc(s,False));delta=(yes[0] or 0)-(no[0] or 0);delta_loss=(yes[1] or 0)-(no[1] or 0)
+    period=breadcrumb('1',s);levels=af.groupby('ai_level').size().to_dict()
+    top,low=q.news_selection(af);rows=list(top.itertuples());cards=[news_card(rows[0] if rows else None,'อันดับ 1 · ยอดเข้าชมสูงสุด',True),html.Div([news_card(rows[1] if len(rows)>1 else None,'อันดับ 2'),news_card(rows[2] if len(rows)>2 else None,'อันดับ 3')],className='news-secondary'),news_card(next(low.itertuples(),None),'ยอดเข้าชมต่ำสุดในชุดนี้')]
+    details=html.P('เลือกเดือนแล้วแตะสัปดาห์ หรือเลือกจากตัวกรองเพื่อดูรายละเอียดต้นทาง')
+    if s.get('acsc_week'):
+        selected=panel_data[panel_data.week_start==s['acsc_week']]
+        details=table(selected,'1',s,['week_start','source_week_start','source_week_end','days','cases','loss_baht','loss_precision','flag_type','missing_reason','source_url'])
+    evidence=q.evidence('1',s)
+    current=f"พบ Deepfake ที่บันทึก {len(ai):,} เหตุการณ์ ข่าว AFNC เกี่ยวกับ AI {len(af):,} โพสต์ และคดี ACSC {number(cases)} คดี ตามขอบเขตตัวกรองของแต่ละแหล่ง"
+    return html.Div([html.P('01 / AI และภัยออนไลน์ในไทย',className='eyebrow'),html.H1('โลกเห็นอะไร ไทยเจออะไร'),html.P('เหตุการณ์ Deepfake ข่าวเกี่ยวกับ AI และสถิติคดีเปลี่ยนอย่างไรในช่วงเวลาเดียวกัน?'),filters('1',s),html.Div([kpi('K1.1 Deepfake ที่บันทึก',number(len(ai)),'เหตุการณ์','AIID',period),kpi('K1.2 ข่าวเกี่ยวกับ AI',number(len(af)),'โพสต์ · ค่าขั้นต่ำ','AFNC',period,f"กล่าวถึง {levels.get('mention',0)} · คำบ่งชี้สื่อ {levels.get('media_evidence',0)} · ต้องตรวจสอบ"),kpi('K1.3 คดีที่แจ้ง',number(cases),'คดี','ACSC',period,'ไม่มีตัวแปรระบุว่าคดีเกี่ยวกับ AI'),kpi('K1.4 ความเสียหาย',number(loss),'บาท','ACSC',period,f'{number(ratio,2)} บาท/คดี')],className='kpi-grid'),html.Section([html.H2('ข่าวเด่นจากข้อมูลจริง'),html.P(f'มีข่าวในชุดนี้ {len(af)} รายการ · ยอดเข้าชม ณ วันที่เก็บข้อมูล 1 พ.ย. 2569 · ไม่ใช่ความรุนแรงหรือความน่าเชื่อถือ'),html.Div(cards,className='news-grid')]),html.Div([panel('C1.1 / C1.2 · โลกกับไทยบนแกนเวลาเดียวกัน',graph('timeline1',f.paired(ai,af,s,dark)),'ตัวกรองระดับ AI หมวด และแอบอ้างไม่มีผลกับ AIID · ปี 2569 ไม่เต็มและ AIID อาจบันทึกล่าช้า'),panel('C1.3 · ข่าวเกี่ยวกับ AI อยู่หมวดใด',[graph('category1',f.categories(af,dark)),action('แอบอ้างหน่วยงาน/บุคคล · แตะเพื่อสลับ','imp','1',className='chip')],'หมวดคือประเภทข่าว ส่วนแอบอ้างเป็นวิธีการหลอก แยกกัน')],className='grid-2'),panel('C1.5 / C1.6 · คดีและความเสียหายที่มีรายงาน',[html.P(f'รวม/ไม่รวม suspect ต่างกัน {delta:,} คดี · {delta_loss:,} บาท'),html.P('เดือนจัดตามวันเริ่มสัปดาห์ต้นทาง ไม่ใช่ยอดรายวันของเดือน · สัปดาห์ 8 วันเก็บครบ ไม่แบ่งยอดสมมติ'),graph('acsc1',f.acsc_fig(panel_data,s,dark)),html.P('ช่องว่าง = ไม่มีรายงาน หรือไม่รวมเพราะ suspect · วงกลมกลวง = ปัดเป็นล้านบาท · สีส้ม = suspect'),details],'ตัวกรองระดับ AI หมวด และแอบอ้างไม่มีผลกับ ACSC · coverage 9 พ.ย. 2568–24 ต.ค. 2569'),panel('T1 · หลักฐานของตัวเลข',[download('1',states),table(evidence,'1',s)]),summary(current+' '+q.comparable(s),'ข่าว AI เป็นกฎของโครงการและเป็นค่าขั้นต่ำจาก content ที่ถูกตัด ต้องตรวจสอบคำชี้แจง ไม่ยืนยันว่า AI สร้างข่าวทั้งหมด และไม่มีข้อมูลเชื่อมคดีต่อข่าว การวางกราฟร่วมเวลาไม่ยืนยันสาเหตุ')])

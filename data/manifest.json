@@ -1,0 +1,1173 @@
+{
+  "rule_version": "adidur-1.0",
+  "sources": [
+    {
+      "file": "AIID_Excel_Export-20261026.xlsx",
+      "sha256": "bb6168db872882b295252b6ed75da56ffe50cd54be02e0bfabd670410b488c98",
+      "bytes": 2603378
+    },
+    {
+      "file": "freedom_on_the_net_scores.csv",
+      "sha256": "e924b3bce8452a7f72b68b2c40b76520e0e16ac4011b6da15e45cf2587557928",
+      "bytes": 72794
+    },
+    {
+      "file": "euvsdisinfo_base.csv",
+      "sha256": "d80c30120cdf7e2f48b36d5bfadc97187d4c6aee8aa149dd446abacd9b56cab3",
+      "bytes": 5493547
+    },
+    {
+      "file": "thai-disinfo-scam-dataset.xlsx",
+      "sha256": "dc324f6ca9c7580af68193d41be4798c22c336e1c4f0e63482d9447353374f9f",
+      "bytes": 7972070
+    }
+  ],
+  "sheets": {
+    "AIID_Excel_Export-20261026.xlsx": [
+      "Incidents",
+      "Reports",
+      "Entities",
+      "Data Dictionary",
+      "Coverage Map"
+    ],
+    "thai-disinfo-scam-dataset.xlsx": [
+      "README",
+      "weekly_panel",
+      "afnc_items",
+      "acsc_weekly",
+      "data_dictionary"
+    ]
+  },
+  "before": {
+    "aiid_incident": {
+      "rows": 1775,
+      "duplicate_keys": 0,
+      "nulls": {
+        "Incident ID": 0,
+        "date": 0,
+        "year": 0,
+        "title": 0,
+        "description": 0,
+        "deployer": 3,
+        "developer": 1,
+        "harmed": 2,
+        "Editors": 0,
+        "Implicated Systems": 549,
+        "Date Modified": 516,
+        "Editor Notes": 1234,
+        "Data Sources": 279,
+        "report_count": 0,
+        "Risk Domain": 279,
+        "Risk Subdomain": 280,
+        "Responsible Entity": 279,
+        "Intent": 279,
+        "Timing": 279,
+        "AI Goal": 1734,
+        "AI Technology": 1749,
+        "AI Technology (Potential)": 1746,
+        "Technical Failure": 1749,
+        "Technical Failure (Potential)": 1739,
+        "Harm Domain": 1575,
+        "Tangible Harm": 1575,
+        "AI Harm Level": 1575,
+        "Rights Violation": 1575,
+        "Harm Distribution Basis": 1569,
+        "Lives Lost": 1569,
+        "Injuries": 1569,
+        "Sector of Deployment": 1569,
+        "Public Sector Deployment": 1575,
+        "Infrastructure Sectors": 1569,
+        "Location Region": 1575,
+        "Country Code": 1632,
+        "Location City": 1721,
+        "Incident Year": 1575,
+        "Incident Month": 1615,
+        "Incident Day": 1665,
+        "Intentional Harm": 1577,
+        "Autonomy Level": 1575,
+        "AI Task": 1595,
+        "AI Methods": 1672,
+        "AI System Description": 1579,
+        "Data Inputs": 1582,
+        "Involving Minor": 1575,
+        "Protected Characteristic": 1575,
+        "AI System": 1575,
+        "Detrimental Content": 1575,
+        "Impact on Critical Services": 1575,
+        "Multiple AI Interaction": 1575,
+        "Embedded": 1575,
+        "Entities": 1575,
+        "Physical Objects": 1575,
+        "Deployed": 1575,
+        "Estimated Date": 1568,
+        "Estimated Harm Quantities": 1568,
+        "Special Interest Intangible Harm": 1575
+      },
+      "schema": {
+        "Incident ID": "int64",
+        "date": "datetime64[ns]",
+        "year": "int64",
+        "title": "object",
+        "description": "object",
+        "deployer": "object",
+        "developer": "object",
+        "harmed": "object",
+        "Editors": "object",
+        "Implicated Systems": "object",
+        "Date Modified": "datetime64[ns]",
+        "Editor Notes": "object",
+        "Data Sources": "object",
+        "report_count": "int64",
+        "Risk Domain": "object",
+        "Risk Subdomain": "object",
+        "Responsible Entity": "object",
+        "Intent": "object",
+        "Timing": "object",
+        "AI Goal": "object",
+        "AI Technology": "object",
+        "AI Technology (Potential)": "object",
+        "Technical Failure": "object",
+        "Technical Failure (Potential)": "object",
+        "Harm Domain": "object",
+        "Tangible Harm": "object",
+        "AI Harm Level": "object",
+        "Rights Violation": "object",
+        "Harm Distribution Basis": "object",
+        "Lives Lost": "float64",
+        "Injuries": "float64",
+        "Sector of Deployment": "object",
+        "Public Sector Deployment": "object",
+        "Infrastructure Sectors": "object",
+        "Location Region": "object",
+        "Country Code": "object",
+        "Location City": "object",
+        "Incident Year": "float64",
+        "Incident Month": "object",
+        "Incident Day": "object",
+        "Intentional Harm": "object",
+        "Autonomy Level": "object",
+        "AI Task": "object",
+        "AI Methods": "object",
+        "AI System Description": "object",
+        "Data Inputs": "object",
+        "Involving Minor": "object",
+        "Protected Characteristic": "object",
+        "AI System": "object",
+        "Detrimental Content": "object",
+        "Impact on Critical Services": "object",
+        "Multiple AI Interaction": "object",
+        "Embedded": "object",
+        "Entities": "object",
+        "Physical Objects": "object",
+        "Deployed": "object",
+        "Estimated Date": "float64",
+        "Estimated Harm Quantities": "float64",
+        "Special Interest Intangible Harm": "object"
+      }
+    },
+    "fotn_score": {
+      "rows": 940,
+      "duplicate_keys": 0,
+      "nulls": {
+        "country": 0,
+        "iso3": 0,
+        "iso_numeric": 0,
+        "data_year": 0,
+        "report_edition": 0,
+        "total_score": 0,
+        "obstacles_to_access": 0,
+        "limits_on_content": 0,
+        "violations_of_user_rights": 0,
+        "status_code": 0,
+        "status": 0,
+        "status_th": 0
+      },
+      "schema": {
+        "country": "object",
+        "iso3": "object",
+        "iso_numeric": "int64",
+        "data_year": "int64",
+        "report_edition": "int64",
+        "total_score": "int64",
+        "obstacles_to_access": "int64",
+        "limits_on_content": "int64",
+        "violations_of_user_rights": "int64",
+        "status_code": "int64",
+        "status": "object",
+        "status_th": "object"
+      }
+    },
+    "eu_article": {
+      "rows": 18249,
+      "duplicate_keys": 0,
+      "nulls": {
+        "debunk_id": 0,
+        "keywords": 54,
+        "article_id": 0,
+        "article_publisher": 0,
+        "article_domain": 0,
+        "article_url": 0,
+        "article_language": 0,
+        "debunk_date": 0,
+        "class": 0
+      },
+      "schema": {
+        "debunk_id": "object",
+        "keywords": "object",
+        "article_id": "object",
+        "article_publisher": "object",
+        "article_domain": "object",
+        "article_url": "object",
+        "article_language": "object",
+        "debunk_date": "object",
+        "class": "object"
+      }
+    },
+    "afnc_item": {
+      "rows": 17726,
+      "duplicate_keys": 0,
+      "nulls": {
+        "post_id": 0,
+        "published_bkk": 0,
+        "date": 0,
+        "week_start": 0,
+        "year": 0,
+        "month": 0,
+        "item_type": 0,
+        "verdict_th": 3268,
+        "verdict_en": 3268,
+        "verdict_source": 3268,
+        "category_th": 0,
+        "category_en": 0,
+        "checked_by_agency": 3641,
+        "title": 0,
+        "content": 0,
+        "topic_tags": 640,
+        "view_count": 0,
+        "url": 0
+      },
+      "schema": {
+        "post_id": "int64",
+        "published_bkk": "object",
+        "date": "object",
+        "week_start": "datetime64[ns]",
+        "year": "int64",
+        "month": "object",
+        "item_type": "object",
+        "verdict_th": "object",
+        "verdict_en": "object",
+        "verdict_source": "object",
+        "category_th": "object",
+        "category_en": "object",
+        "checked_by_agency": "object",
+        "title": "object",
+        "content": "object",
+        "topic_tags": "object",
+        "view_count": "int64",
+        "url": "object"
+      }
+    },
+    "weekly_panel": {
+      "rows": 409,
+      "duplicate_keys": 0,
+      "nulls": {
+        "week_start": 0,
+        "week_end": 0,
+        "year": 0,
+        "month": 0,
+        "afnc_verdicts": 0,
+        "afnc_fake": 0,
+        "afnc_distorted": 0,
+        "afnc_true": 0,
+        "afnc_false_share_pct": 27,
+        "afnc_false_gov_policy": 0,
+        "afnc_false_health": 0,
+        "afnc_false_finance": 0,
+        "afnc_false_disaster": 0,
+        "afnc_false_security": 0,
+        "afnc_false_other": 0,
+        "afnc_online_crime_advisories": 0,
+        "acsc_reported": 0,
+        "acsc_cases": 361,
+        "acsc_loss_baht": 361,
+        "acsc_loss_precision": 361,
+        "acsc_loss_per_case_baht": 361,
+        "acsc_top_type_th": 363,
+        "acsc_top_type_case_share_pct": 372,
+        "acsc_highest_loss_type_th": 364,
+        "acsc_highest_loss_type_loss_baht": 382,
+        "acsc_flag": 405,
+        "acsc_source_url": 361
+      },
+      "schema": {
+        "week_start": "datetime64[ns]",
+        "week_end": "datetime64[ns]",
+        "year": "int64",
+        "month": "object",
+        "afnc_verdicts": "int64",
+        "afnc_fake": "int64",
+        "afnc_distorted": "int64",
+        "afnc_true": "int64",
+        "afnc_false_share_pct": "float64",
+        "afnc_false_gov_policy": "int64",
+        "afnc_false_health": "int64",
+        "afnc_false_finance": "int64",
+        "afnc_false_disaster": "int64",
+        "afnc_false_security": "int64",
+        "afnc_false_other": "int64",
+        "afnc_online_crime_advisories": "int64",
+        "acsc_reported": "bool",
+        "acsc_cases": "float64",
+        "acsc_loss_baht": "float64",
+        "acsc_loss_precision": "object",
+        "acsc_loss_per_case_baht": "float64",
+        "acsc_top_type_th": "object",
+        "acsc_top_type_case_share_pct": "float64",
+        "acsc_highest_loss_type_th": "object",
+        "acsc_highest_loss_type_loss_baht": "float64",
+        "acsc_flag": "object",
+        "acsc_source_url": "object"
+      }
+    },
+    "acsc_week": {
+      "rows": 48,
+      "duplicate_keys": 0,
+      "nulls": {
+        "week_start": 0,
+        "week_end": 0,
+        "days": 0,
+        "cases": 0,
+        "loss_baht": 0,
+        "loss_precision": 0,
+        "loss_per_case_baht": 0,
+        "cases_change_vs_prev_week": 2,
+        "loss_change_vs_prev_week_baht": 2,
+        "top_type_th": 2,
+        "top_type_case_share_pct": 11,
+        "highest_loss_type_th": 3,
+        "highest_loss_type_loss_baht": 21,
+        "flag": 44,
+        "publisher": 0,
+        "article_date": 0,
+        "source_url": 0,
+        "notes": 0
+      },
+      "schema": {
+        "week_start": "datetime64[ns]",
+        "week_end": "datetime64[ns]",
+        "days": "int64",
+        "cases": "int64",
+        "loss_baht": "int64",
+        "loss_precision": "object",
+        "loss_per_case_baht": "int64",
+        "cases_change_vs_prev_week": "float64",
+        "loss_change_vs_prev_week_baht": "float64",
+        "top_type_th": "object",
+        "top_type_case_share_pct": "float64",
+        "highest_loss_type_th": "object",
+        "highest_loss_type_loss_baht": "float64",
+        "flag": "object",
+        "publisher": "object",
+        "article_date": "object",
+        "source_url": "object",
+        "notes": "object"
+      }
+    }
+  },
+  "after": {
+    "country": {
+      "rows": 72,
+      "duplicate_keys": 0,
+      "nulls": {
+        "iso3": 0,
+        "country": 0,
+        "country_th": 0
+      },
+      "schema": {
+        "iso3": "object",
+        "country": "object",
+        "country_th": "object"
+      }
+    },
+    "theme": {
+      "rows": 7,
+      "duplicate_keys": 0,
+      "nulls": {
+        "theme_id": 0,
+        "theme_th": 0,
+        "named_by": 0,
+        "eu_rule": 0,
+        "afnc_rule": 0
+      },
+      "schema": {
+        "theme_id": "object",
+        "theme_th": "object",
+        "named_by": "object",
+        "eu_rule": "object",
+        "afnc_rule": "object"
+      }
+    },
+    "aiid_incident": {
+      "rows": 1775,
+      "duplicate_keys": 0,
+      "nulls": {
+        "incident_id": 0,
+        "date": 0,
+        "year": 0,
+        "title": 0,
+        "description": 0,
+        "implicated_systems": 549,
+        "risk_domain": 279,
+        "report_count": 0,
+        "month": 0,
+        "deepfake_terms": 0,
+        "is_deepfake": 0,
+        "is_misinfo": 0,
+        "url": 0
+      },
+      "schema": {
+        "incident_id": "int64",
+        "date": "object",
+        "year": "int64",
+        "title": "object",
+        "description": "object",
+        "implicated_systems": "object",
+        "risk_domain": "object",
+        "report_count": "int64",
+        "month": "object",
+        "deepfake_terms": "object",
+        "is_deepfake": "int64",
+        "is_misinfo": "int64",
+        "url": "object"
+      }
+    },
+    "afnc_item": {
+      "rows": 17726,
+      "duplicate_keys": 0,
+      "nulls": {
+        "post_id": 0,
+        "published_bkk": 0,
+        "date": 0,
+        "week_start": 0,
+        "year": 0,
+        "month": 0,
+        "item_type": 0,
+        "verdict_th": 3268,
+        "verdict_en": 3268,
+        "verdict_source": 3268,
+        "category_th": 0,
+        "category_en": 0,
+        "checked_by_agency": 3641,
+        "title": 0,
+        "content_500": 0,
+        "topic_tags": 640,
+        "view_count": 0,
+        "url": 0,
+        "clean_text": 0
+      },
+      "schema": {
+        "post_id": "int64",
+        "published_bkk": "object",
+        "date": "object",
+        "week_start": "object",
+        "year": "int64",
+        "month": "object",
+        "item_type": "object",
+        "verdict_th": "object",
+        "verdict_en": "object",
+        "verdict_source": "object",
+        "category_th": "object",
+        "category_en": "object",
+        "checked_by_agency": "object",
+        "title": "object",
+        "content_500": "object",
+        "topic_tags": "object",
+        "view_count": "int64",
+        "url": "object",
+        "clean_text": "object"
+      }
+    },
+    "afnc_ai_match": {
+      "rows": 52,
+      "duplicate_keys": 0,
+      "nulls": {
+        "post_id": 0,
+        "ai_level": 0,
+        "matched_terms": 0,
+        "evidence_snippet": 0,
+        "review_status": 0,
+        "impersonation_flag": 0,
+        "rule_version": 0
+      },
+      "schema": {
+        "post_id": "int64",
+        "ai_level": "object",
+        "matched_terms": "object",
+        "evidence_snippet": "object",
+        "review_status": "object",
+        "impersonation_flag": "int64",
+        "rule_version": "object"
+      }
+    },
+    "weekly_panel": {
+      "rows": 409,
+      "duplicate_keys": 0,
+      "nulls": {
+        "week_start": 0,
+        "week_end": 0,
+        "year": 0,
+        "month": 0,
+        "afnc_verdicts": 0,
+        "afnc_fake": 0,
+        "afnc_distorted": 0,
+        "afnc_true": 0,
+        "afnc_false_share_pct": 27,
+        "afnc_false_gov_policy": 0,
+        "afnc_false_health": 0,
+        "afnc_false_finance": 0,
+        "afnc_false_disaster": 0,
+        "afnc_false_security": 0,
+        "afnc_false_other": 0,
+        "afnc_online_crime_advisories": 0,
+        "acsc_reported": 0,
+        "acsc_cases": 361,
+        "acsc_loss_baht": 361,
+        "acsc_loss_precision": 361,
+        "acsc_loss_per_case_baht": 361,
+        "acsc_top_type_th": 363,
+        "acsc_top_type_case_share_pct": 372,
+        "acsc_highest_loss_type_th": 364,
+        "acsc_highest_loss_type_loss_baht": 382,
+        "acsc_flag": 405,
+        "acsc_source_url": 361
+      },
+      "schema": {
+        "week_start": "object",
+        "week_end": "object",
+        "year": "int64",
+        "month": "object",
+        "afnc_verdicts": "int64",
+        "afnc_fake": "int64",
+        "afnc_distorted": "int64",
+        "afnc_true": "int64",
+        "afnc_false_share_pct": "float64",
+        "afnc_false_gov_policy": "int64",
+        "afnc_false_health": "int64",
+        "afnc_false_finance": "int64",
+        "afnc_false_disaster": "int64",
+        "afnc_false_security": "int64",
+        "afnc_false_other": "int64",
+        "afnc_online_crime_advisories": "int64",
+        "acsc_reported": "bool",
+        "acsc_cases": "float64",
+        "acsc_loss_baht": "float64",
+        "acsc_loss_precision": "object",
+        "acsc_loss_per_case_baht": "float64",
+        "acsc_top_type_th": "object",
+        "acsc_top_type_case_share_pct": "float64",
+        "acsc_highest_loss_type_th": "object",
+        "acsc_highest_loss_type_loss_baht": "float64",
+        "acsc_flag": "object",
+        "acsc_source_url": "object"
+      }
+    },
+    "acsc_week": {
+      "rows": 48,
+      "duplicate_keys": 0,
+      "nulls": {
+        "week_start": 0,
+        "week_end": 0,
+        "days": 0,
+        "cases": 0,
+        "loss_baht": 0,
+        "loss_precision": 0,
+        "loss_per_case_baht": 0,
+        "cases_change_vs_prev_week": 2,
+        "loss_change_vs_prev_week_baht": 2,
+        "top_type_th": 2,
+        "top_type_case_share_pct": 11,
+        "highest_loss_type_th": 3,
+        "highest_loss_type_loss_baht": 21,
+        "flag": 44,
+        "publisher": 0,
+        "article_date": 0,
+        "source_url": 0,
+        "notes": 0,
+        "month": 0,
+        "flag_type": 44,
+        "panel_week_start": 0
+      },
+      "schema": {
+        "week_start": "object",
+        "week_end": "object",
+        "days": "int64",
+        "cases": "int64",
+        "loss_baht": "int64",
+        "loss_precision": "object",
+        "loss_per_case_baht": "int64",
+        "cases_change_vs_prev_week": "float64",
+        "loss_change_vs_prev_week_baht": "float64",
+        "top_type_th": "object",
+        "top_type_case_share_pct": "float64",
+        "highest_loss_type_th": "object",
+        "highest_loss_type_loss_baht": "float64",
+        "flag": "object",
+        "publisher": "object",
+        "article_date": "object",
+        "source_url": "object",
+        "notes": "object",
+        "month": "object",
+        "flag_type": "object",
+        "panel_week_start": "object"
+      }
+    },
+    "eu_debunk": {
+      "rows": 8522,
+      "duplicate_keys": 0,
+      "nulls": {
+        "debunk_id": 0,
+        "debunk_date": 0,
+        "keywords": 33,
+        "n_articles": 0,
+        "year": 0,
+        "month": 0
+      },
+      "schema": {
+        "debunk_id": "object",
+        "debunk_date": "object",
+        "keywords": "object",
+        "n_articles": "int64",
+        "year": "int64",
+        "month": "object"
+      }
+    },
+    "eu_article": {
+      "rows": 18249,
+      "duplicate_keys": 0,
+      "nulls": {
+        "debunk_id": 0,
+        "article_id": 0,
+        "article_publisher": 0,
+        "article_domain": 0,
+        "article_url": 0,
+        "article_language": 0,
+        "class": 0
+      },
+      "schema": {
+        "debunk_id": "object",
+        "article_id": "object",
+        "article_publisher": "object",
+        "article_domain": "object",
+        "article_url": "object",
+        "article_language": "object",
+        "class": "object"
+      }
+    },
+    "eu_debunk_keyword": {
+      "rows": 29842,
+      "duplicate_keys": 0,
+      "nulls": {
+        "debunk_id": 0,
+        "keyword": 0
+      },
+      "schema": {
+        "debunk_id": "object",
+        "keyword": "object"
+      }
+    },
+    "eu_debunk_theme": {
+      "rows": 8814,
+      "duplicate_keys": 0,
+      "nulls": {
+        "debunk_id": 0,
+        "theme_id": 0,
+        "matched_terms": 0
+      },
+      "schema": {
+        "debunk_id": "object",
+        "theme_id": "object",
+        "matched_terms": "object"
+      }
+    },
+    "afnc_theme": {
+      "rows": 10280,
+      "duplicate_keys": 0,
+      "nulls": {
+        "post_id": 0,
+        "theme_id": 0,
+        "matched_by": 0,
+        "matched_terms": 0
+      },
+      "schema": {
+        "post_id": "int64",
+        "theme_id": "object",
+        "matched_by": "object",
+        "matched_terms": "object"
+      }
+    },
+    "fotn_score": {
+      "rows": 940,
+      "duplicate_keys": 0,
+      "nulls": {
+        "country": 0,
+        "iso3": 0,
+        "iso_numeric": 0,
+        "data_year": 0,
+        "report_edition": 0,
+        "total_score": 0,
+        "obstacles_to_access": 0,
+        "limits_on_content": 0,
+        "violations_of_user_rights": 0,
+        "status_code": 0,
+        "status": 0,
+        "status_th": 0,
+        "country_th": 0
+      },
+      "schema": {
+        "country": "object",
+        "iso3": "object",
+        "iso_numeric": "int64",
+        "data_year": "int64",
+        "report_edition": "int64",
+        "total_score": "int64",
+        "obstacles_to_access": "int64",
+        "limits_on_content": "int64",
+        "violations_of_user_rights": "int64",
+        "status_code": "int64",
+        "status": "object",
+        "status_th": "object",
+        "country_th": "object"
+      }
+    },
+    "country_group": {
+      "rows": 9,
+      "duplicate_keys": 0,
+      "nulls": {
+        "iso3": 0,
+        "group_name": 0
+      },
+      "schema": {
+        "iso3": "object",
+        "group_name": "object"
+      }
+    },
+    "thai_data_dictionary": {
+      "rows": 30,
+      "duplicate_keys": 0,
+      "nulls": {
+        "sheet": 0,
+        "column": 0,
+        "type": 1,
+        "description": 0
+      },
+      "schema": {
+        "sheet": "object",
+        "column": "object",
+        "type": "object",
+        "description": "object"
+      }
+    }
+  },
+  "coverage": {
+    "country": {},
+    "theme": {},
+    "aiid_incident": {
+      "date": {
+        "min": "1983-09-26",
+        "max": "2026-10-22"
+      }
+    },
+    "afnc_item": {
+      "date": {
+        "min": "2019-01-05",
+        "max": "2026-10-31"
+      },
+      "week_start": {
+        "min": "2018-12-30",
+        "max": "2026-10-25"
+      }
+    },
+    "afnc_ai_match": {},
+    "weekly_panel": {
+      "week_start": {
+        "min": "2018-12-30",
+        "max": "2026-10-25"
+      }
+    },
+    "acsc_week": {
+      "week_start": {
+        "min": "2025-11-09",
+        "max": "2026-10-18"
+      }
+    },
+    "eu_debunk": {
+      "debunk_date": {
+        "min": "2015-01-06",
+        "max": "2023-08-01"
+      }
+    },
+    "eu_article": {},
+    "eu_debunk_keyword": {},
+    "eu_debunk_theme": {},
+    "afnc_theme": {},
+    "fotn_score": {
+      "data_year": {
+        "min": "2010",
+        "max": "2024"
+      }
+    },
+    "country_group": {},
+    "thai_data_dictionary": {}
+  },
+  "content_length": {
+    "min": 20,
+    "median": 500.0,
+    "max": 500
+  },
+  "acsc_mapping": [
+    {
+      "week_start": "2025-11-09",
+      "week_end": "2025-11-15",
+      "panel_week_start": "2025-11-09",
+      "days": 7,
+      "source_url": "https://thaitabloid.com/archives/257648"
+    },
+    {
+      "week_start": "2025-11-16",
+      "week_end": "2025-11-22",
+      "panel_week_start": "2025-11-16",
+      "days": 7,
+      "source_url": "https://thaitabloid.com/archives/259507"
+    },
+    {
+      "week_start": "2025-11-23",
+      "week_end": "2025-11-29",
+      "panel_week_start": "2025-11-23",
+      "days": 7,
+      "source_url": "https://www.fm91bkk.com/newsarticle/62338"
+    },
+    {
+      "week_start": "2025-11-30",
+      "week_end": "2025-12-06",
+      "panel_week_start": "2025-11-30",
+      "days": 7,
+      "source_url": "https://www.infoquest.co.th/?p=552098"
+    },
+    {
+      "week_start": "2025-12-07",
+      "week_end": "2025-12-13",
+      "panel_week_start": "2025-12-07",
+      "days": 7,
+      "source_url": "https://thaitabloid.com/archives/264689"
+    },
+    {
+      "week_start": "2025-12-14",
+      "week_end": "2025-12-20",
+      "panel_week_start": "2025-12-14",
+      "days": 7,
+      "source_url": "https://www.fm91bkk.com/newsarticle/63670"
+    },
+    {
+      "week_start": "2025-12-21",
+      "week_end": "2025-12-27",
+      "panel_week_start": "2025-12-21",
+      "days": 7,
+      "source_url": "https://thaitabloid.com/archives/267875"
+    },
+    {
+      "week_start": "2025-12-28",
+      "week_end": "2026-01-03",
+      "panel_week_start": "2025-12-28",
+      "days": 7,
+      "source_url": "https://www.naewna.com/local/938835"
+    },
+    {
+      "week_start": "2026-01-04",
+      "week_end": "2026-01-10",
+      "panel_week_start": "2026-01-04",
+      "days": 7,
+      "source_url": "https://saranitet.police.go.th/commanders-mission/crime-prevention-and-suppression_12012026_58823/"
+    },
+    {
+      "week_start": "2026-01-11",
+      "week_end": "2026-01-17",
+      "panel_week_start": "2026-01-11",
+      "days": 7,
+      "source_url": "https://www.thaipost.net/criminality-news/933750/"
+    },
+    {
+      "week_start": "2026-01-18",
+      "week_end": "2026-01-24",
+      "panel_week_start": "2026-01-18",
+      "days": 7,
+      "source_url": "https://saranitet.police.go.th/commanders-mission/crime-prevention-and-suppression_26012026_59088/"
+    },
+    {
+      "week_start": "2026-01-25",
+      "week_end": "2026-01-31",
+      "panel_week_start": "2026-01-25",
+      "days": 7,
+      "source_url": "https://www.dailynews.co.th/news/5560746/"
+    },
+    {
+      "week_start": "2026-02-01",
+      "week_end": "2026-02-07",
+      "panel_week_start": "2026-02-01",
+      "days": 7,
+      "source_url": "https://saranitet.police.go.th/commanders-mission/crime-prevention-and-suppression_09022026_59659/"
+    },
+    {
+      "week_start": "2026-02-08",
+      "week_end": "2026-02-14",
+      "panel_week_start": "2026-02-08",
+      "days": 7,
+      "source_url": "https://www.dailynews.co.th/news/5606998/"
+    },
+    {
+      "week_start": "2026-02-15",
+      "week_end": "2026-02-21",
+      "panel_week_start": "2026-02-15",
+      "days": 7,
+      "source_url": "https://www.pptvhd36.com/news/%E0%B8%AA%E0%B8%B1%E0%B8%87%E0%B8%84%E0%B8%A1/269236"
+    },
+    {
+      "week_start": "2026-02-22",
+      "week_end": "2026-02-28",
+      "panel_week_start": "2026-02-22",
+      "days": 7,
+      "source_url": "https://siamrath.co.th/quality-of-life/crime/132309"
+    },
+    {
+      "week_start": "2026-03-01",
+      "week_end": "2026-03-07",
+      "panel_week_start": "2026-03-01",
+      "days": 7,
+      "source_url": "https://www.dailynews.co.th/news/5671107/"
+    },
+    {
+      "week_start": "2026-03-08",
+      "week_end": "2026-03-14",
+      "panel_week_start": "2026-03-08",
+      "days": 7,
+      "source_url": "https://www.dailynews.co.th/news/5693078/"
+    },
+    {
+      "week_start": "2026-03-15",
+      "week_end": "2026-03-21",
+      "panel_week_start": "2026-03-15",
+      "days": 7,
+      "source_url": "https://thestandard.co/online-scam-thailand-money-loss/"
+    },
+    {
+      "week_start": "2026-03-22",
+      "week_end": "2026-03-28",
+      "panel_week_start": "2026-03-22",
+      "days": 7,
+      "source_url": "https://www.thaipost.net/criminality-news/971821/"
+    },
+    {
+      "week_start": "2026-03-29",
+      "week_end": "2026-04-04",
+      "panel_week_start": "2026-03-29",
+      "days": 7,
+      "source_url": "https://www.dailynews.co.th/news/5755490/"
+    },
+    {
+      "week_start": "2026-04-05",
+      "week_end": "2026-04-11",
+      "panel_week_start": "2026-04-05",
+      "days": 7,
+      "source_url": "https://www.dailynews.co.th/news/5779451/"
+    },
+    {
+      "week_start": "2026-04-12",
+      "week_end": "2026-04-18",
+      "panel_week_start": "2026-04-12",
+      "days": 7,
+      "source_url": "https://www.komchadluek.net/news/crime/616136"
+    },
+    {
+      "week_start": "2026-04-19",
+      "week_end": "2026-04-25",
+      "panel_week_start": "2026-04-19",
+      "days": 7,
+      "source_url": "https://www.thaipost.net/criminality-news/986703/"
+    },
+    {
+      "week_start": "2026-04-26",
+      "week_end": "2026-05-02",
+      "panel_week_start": "2026-04-26",
+      "days": 7,
+      "source_url": "https://www.nationtv.tv/news/current-issue/378976943"
+    },
+    {
+      "week_start": "2026-05-03",
+      "week_end": "2026-05-09",
+      "panel_week_start": "2026-05-03",
+      "days": 7,
+      "source_url": "https://www.dailynews.co.th/news/5852341/"
+    },
+    {
+      "week_start": "2026-05-10",
+      "week_end": "2026-05-16",
+      "panel_week_start": "2026-05-10",
+      "days": 7,
+      "source_url": "https://thaitabloid.com/archives/296017"
+    },
+    {
+      "week_start": "2026-05-17",
+      "week_end": "2026-05-23",
+      "panel_week_start": "2026-05-17",
+      "days": 7,
+      "source_url": "https://www.dailynews.co.th/news/5889776/"
+    },
+    {
+      "week_start": "2026-05-24",
+      "week_end": "2026-05-30",
+      "panel_week_start": "2026-05-24",
+      "days": 7,
+      "source_url": "https://www.thaipbs.or.th/verify/news/content/13100"
+    },
+    {
+      "week_start": "2026-05-30",
+      "week_end": "2026-06-06",
+      "panel_week_start": "2026-05-31",
+      "days": 8,
+      "source_url": "https://www.dailynews.co.th/news/5928411/"
+    },
+    {
+      "week_start": "2026-06-07",
+      "week_end": "2026-06-13",
+      "panel_week_start": "2026-06-07",
+      "days": 7,
+      "source_url": "https://www.bangkokbiznews.com/news/news-update/1238493"
+    },
+    {
+      "week_start": "2026-06-21",
+      "week_end": "2026-06-27",
+      "panel_week_start": "2026-06-21",
+      "days": 7,
+      "source_url": "https://www.thairath.co.th/news/crime/2942806"
+    },
+    {
+      "week_start": "2026-06-28",
+      "week_end": "2026-07-04",
+      "panel_week_start": "2026-06-28",
+      "days": 7,
+      "source_url": "https://www.bangkokbiznews.com/news/news-update/1241743"
+    },
+    {
+      "week_start": "2026-07-05",
+      "week_end": "2026-07-11",
+      "panel_week_start": "2026-07-05",
+      "days": 7,
+      "source_url": "https://www.bangkokbiznews.com/news/news-update/1242806"
+    },
+    {
+      "week_start": "2026-07-12",
+      "week_end": "2026-07-18",
+      "panel_week_start": "2026-07-12",
+      "days": 7,
+      "source_url": "https://www.thaipost.net/criminality-news/1035403/"
+    },
+    {
+      "week_start": "2026-07-19",
+      "week_end": "2026-07-25",
+      "panel_week_start": "2026-07-19",
+      "days": 7,
+      "source_url": "https://www.posttoday.com/general-news/746026"
+    },
+    {
+      "week_start": "2026-08-02",
+      "week_end": "2026-08-08",
+      "panel_week_start": "2026-08-02",
+      "days": 7,
+      "source_url": "https://www.amarintv.com/news/crime/554313"
+    },
+    {
+      "week_start": "2026-08-09",
+      "week_end": "2026-08-15",
+      "panel_week_start": "2026-08-09",
+      "days": 7,
+      "source_url": "https://www.bangkokbiznews.com/news/1247868"
+    },
+    {
+      "week_start": "2026-08-16",
+      "week_end": "2026-08-22",
+      "panel_week_start": "2026-08-16",
+      "days": 7,
+      "source_url": "https://www.bangkokbiznews.com/news/news-update/1248799"
+    },
+    {
+      "week_start": "2026-08-23",
+      "week_end": "2026-08-29",
+      "panel_week_start": "2026-08-23",
+      "days": 7,
+      "source_url": "https://www.chiangmainews.co.th/news/4052313/"
+    },
+    {
+      "week_start": "2026-08-30",
+      "week_end": "2026-09-05",
+      "panel_week_start": "2026-08-30",
+      "days": 7,
+      "source_url": "https://thaitabloid.com/archives/316511"
+    },
+    {
+      "week_start": "2026-09-06",
+      "week_end": "2026-09-12",
+      "panel_week_start": "2026-09-06",
+      "days": 7,
+      "source_url": "https://www.bangkokbiznews.com/news/news-update/1251924"
+    },
+    {
+      "week_start": "2026-09-13",
+      "week_end": "2026-09-19",
+      "panel_week_start": "2026-09-13",
+      "days": 7,
+      "source_url": "https://www.amarintv.com/news/crime/558185"
+    },
+    {
+      "week_start": "2026-09-20",
+      "week_end": "2026-09-26",
+      "panel_week_start": "2026-09-20",
+      "days": 7,
+      "source_url": "https://www.chiangmainews.co.th/social/4153712/"
+    },
+    {
+      "week_start": "2026-09-27",
+      "week_end": "2026-10-03",
+      "panel_week_start": "2026-09-27",
+      "days": 7,
+      "source_url": "https://thaitabloid.com/archives/322863"
+    },
+    {
+      "week_start": "2026-10-04",
+      "week_end": "2026-10-10",
+      "panel_week_start": "2026-10-04",
+      "days": 7,
+      "source_url": "https://thaitabloid.com/archives/324554"
+    },
+    {
+      "week_start": "2026-10-11",
+      "week_end": "2026-10-17",
+      "panel_week_start": "2026-10-11",
+      "days": 7,
+      "source_url": "https://www.thaipost.net/criminality-news/1091424/"
+    },
+    {
+      "week_start": "2026-10-18",
+      "week_end": "2026-10-24",
+      "panel_week_start": "2026-10-18",
+      "days": 7,
+      "source_url": "https://thaitabloid.com/archives/327120"
+    }
+  ],
+  "duration_seconds": 8.366,
+  "notes": [
+    "No source file modified",
+    "AI rules are project-defined indicators; all matches need review",
+    "NULL means no report, not zero",
+    "ACSC month uses source week_start; 8-day interval not split",
+    "Excel AFNC content truncated; AI counts are minimum"
+  ]
+}
