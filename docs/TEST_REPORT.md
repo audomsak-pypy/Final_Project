@@ -46,3 +46,6 @@ E01, E04–E08, E10–E15, E17–E21, E23–E24 และ E22 ฝั่ง AFNC 
 `python scripts/browser_check.py` exit0: **24/24 ผ่าน** viewport12กรณีและทุกแท็บแสดงกราฟครบ, year/monthdrill, tabstate, reload/history, reset, download, consoleไม่มีerror แก้ขั้นสุดท้ายให้ Graphมีheightชัดเจนและresponsiveauto ภาพทุกใบถูกสร้างใหม่จากรุ่นนี้ ดู tests/artifacts/browser-results.json ไม่รวมถึงอุปกรณ์จริง/ทุกcombination
 
 pytestรอบสุดท้าย53ผ่าน4ไม่ผ่านใน1.66วินาที ไม่เปลี่ยนexpectedหรือdisableassertions สถานะreference mismatchยังคงเดิม
+
+## เตรียม Render public deployment
+เพิ่ม tests/test_deploy_render.py:6ผ่าน (fake API:payloadfree,missingkey,reuse,noduplicate,nopaid) pytestรวม59ผ่าน4ไม่ผ่านจาก63ข้อ ผลเดิมเรื่องAIยังคงเดิม Gunicorn1worker /healthผ่าน; browserผ่านproductionserverแท็บ1สามกราฟ ไม่มีpageerrors ไม่ใช่การตรวจURLสาธารณะ ยังไม่เรียกcreateAPIจริงเพราะRENDER_API_KEYไม่พร้อม

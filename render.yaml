@@ -2,9 +2,10 @@ services:
   - type: web
     name: adidur
     runtime: python
+    plan: free
     branch: SU
     buildCommand: pip install -r requirements.txt && python scripts/build_db.py --input Datasets --output data/adidur.db
-    startCommand: gunicorn app.app:server --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    startCommand: gunicorn app.app:server --bind 0.0.0.0:$PORT --workers 1 --timeout 120
     healthCheckPath: /health
     envVars:
       - key: PYTHON_VERSION

@@ -4,7 +4,7 @@
 
 พัฒนาด้วย **Python + Dash + Plotly + SQLite** โดยอ่านข้อมูลจริงจากไฟล์ต้นฉบับใน `Datasets/` และแสดงหลักฐานที่เปิดตรวจสอบย้อนกลับได้
 
-> **สถานะการตรวจรับ:** Browser ผ่าน **24/24 กรณี** และ pytest ผ่าน **53 จาก 57 ข้อ** ยังมี 4 assertions ที่ไม่ตรงค่าอ้างอิงเรื่องข่าว AI กฎที่ใช้อยู่คำนวณได้ 52 โพสต์ เทียบกับ 56 ในเอกสาร จึงยังไม่ถือว่าผ่าน Definition of Done ครบทั้งหมด ดู [รายงานทดสอบ](docs/TEST_REPORT.md) และ [เหตุผลการตัดสินใจ](docs/DECISIONS.md)
+> **สถานะการตรวจรับ:** Browser ผ่าน **24/24 กรณี** และ pytest ผ่าน **59 จาก 63 ข้อ** ยังมี 4 assertions ที่ไม่ตรงค่าอ้างอิงเรื่องข่าว AI กฎที่ใช้อยู่คำนวณได้ 52 โพสต์ เทียบกับ 56 ในเอกสาร จึงยังไม่ถือว่าผ่าน Definition of Done ครบทั้งหมด ดู [รายงานทดสอบ](docs/TEST_REPORT.md) และ [เหตุผลการตัดสินใจ](docs/DECISIONS.md)
 
 ## ความสามารถของเว็บไซต์
 
@@ -95,7 +95,7 @@ SQLite และ CSV ที่เตรียมแล้วถูก `.gitignor
 | ชุดทดสอบ | ผลล่าสุดที่บันทึก |
 |---|---|
 | ค่าอ้างอิงจากเอกสาร | 25 ผ่าน / 4 ไม่ผ่าน จาก 29 assertions |
-| pytest รวม | 53 ผ่าน / 4 ไม่ผ่าน จาก 57 tests |
+| pytest รวม | 59 ผ่าน / 4 ไม่ผ่าน จาก 63 tests |
 | กติกาการกรองและส่งออก | 28/28 ผ่าน ซึ่งรวมอยู่ใน pytest ข้างต้น |
 | Chromium Browser | 24/24 ผ่าน รวม console ไม่มี error ในรอบสุดท้าย |
 | ขนาดและโหมดที่ตรวจ | 360 / 768 / 1280px ทั้งสว่างและมืด สำหรับหน้าเปิดและแท็บ 1 |
@@ -146,10 +146,12 @@ render.yaml               การตั้งค่า Python Web Service ส�
 
 แอปต้องมี **Python server** จึงไม่สามารถเผยแพร่ Dash โดยตรงบน GitHub Pages ได้ ยังไม่มีการ deploy จริงในงานนี้
 
-มี `render.yaml` สำหรับ Render Python Web Service โดยเลือก branch `SU` สร้างฐานระหว่าง build และใช้ Gunicorn เป็น production server ตัวอย่างรันในเครื่อง:
+ดู [ขั้นตอนสร้างลิงก์สาธารณะบน Render](docs/DEPLOY.md)
+
+มี `render.yaml` สำหรับ Render Python Web Service โดยระบุ `plan: free` และเลือก branch `SU` สร้างฐานระหว่าง build และใช้ Gunicorn เป็น production server ตัวอย่างรันในเครื่อง:
 
 ```bash
-.venv/bin/gunicorn app.app:server --bind 0.0.0.0:8050 --workers 2
+.venv/bin/gunicorn app.app:server --bind 0.0.0.0:8050 --workers 1
 ```
 
 หากบริการกำหนดพอร์ตผ่าน `PORT` ให้ใช้ `$PORT` แทน `8050` การเข้าถึง [คู่มือ Render](https://render.com/docs/deploy-plotly-dash) จากเครื่องทดสอบถูก HTTP policy ตอบ 403 จึงยังไม่ได้ตรวจคู่มือบริการฉบับปัจจุบัน ต้องตรวจการตั้งค่ากับบริการอีกครั้งก่อนเผยแพร่ ไม่ถือว่าไฟล์ configuration เป็นหลักฐาน deploy สำเร็จ
