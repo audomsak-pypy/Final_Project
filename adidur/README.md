@@ -1,0 +1,62 @@
+# Adidur — จริงหรือเฟค
+
+แดชบอร์ด Dash + Plotly + SQLite หัวข้อ "AI ข่าวปลอม และภัยออนไลน์: มองโลก เปรียบเทียบไทย"
+สร้างตามเอกสาร `01_PROJECT_SPEC.md`, `02_DATASET_DESCRIPTIONS.md`, `03_DATABASE_SCHEMA.md`, `04_HANDOFF_PROMPT.md`
+(อยู่ที่โฟลเดอร์ด้านบนของโปรเจกต์)
+
+## ติดตั้งและรัน
+
+```bash
+pip install -r requirements.txt
+python scripts/build_db.py data/raw data/adidur.db
+python scripts/expected_values.py data/adidur.db
+pytest -q
+python -m app.app        # เปิด http://127.0.0.1:8050
+```
+
+- `data/raw/` เก็บไฟล์ต้นฉบับ 4 ไฟล์ตามเดิม (AIID, FOTN, EUvsDisinfo, thai-disinfo-scam-dataset)
+- ฐานข้อมูลเก็บปี ค.ศ. ตามต้นทาง แสดงผลเป็น พ.ศ. ที่ชั้นแสดงผลเท่านั้น
+
+## โครงสร้าง
+
+| ไฟล์ | หน้าที่ |
+|---|---|
+| `app/app.py` | สร้างแอป, `dcc.Location`, `dcc.Store` 4 ก้อน + `theme`, สลับหน้า, ซิงก์ state กับ URL |
+| `app/state.py` | ค่าเริ่มต้น state, แปลง state <-> URL, ตัวช่วย พ.ศ. |
+| `app/queries.py` | SQL ทุกตัวจาก 03 เป็นฟังก์ชันรับ state คืน DataFrame |
+| `app/figures.py` | กราฟ Plotly + สีจาก token ชุดเดียวกับ `style.css` (สว่าง/มืด) |
+| `app/pages/` | หน้าเปิด และแท็บ 1–4 (แต่ละแท็บมี callback อัปเดต state 1 ตัว และ callback แสดงผล 1 ตัว) |
+| `app/components/` | chips, breadcrumb, KPI, การ์ดข่าว, ตารางหลักฐาน, กล่องข้อค้นพบ/ข้อจำกัด |
+| `app/assets/` | `style.css` (token สี + โหมดมืด + reduced-motion), `theme.js` (อ่าน `prefers-color-scheme`) |
+| `tests/` | `test_expected.py` (ค่าคาดหวัง E01–E19) และ `test_rules.py` (กติกา) |
+
+## การทำงานของ state
+
+แต่ละแท็บมี store เดียว คลิกกราฟหรือเปลี่ยนตัวกรอง = แก้ store นั้น แล้ว callback เดียวของแท็บ render ทุก KPI กราฟ ตาราง การ์ด และข้อความสรุปใหม่
+ค่าที่ต่างจากค่าเริ่มต้นถูกเขียนลง URL เช่น `/?tab=1&level=month&year=2025` เปิดลิงก์แล้วได้สถานะเดิม
+
+## ผลการตรวจ
+
+- `pytest -q`: ผ่าน 17 รายการ (E01, E02, E04, E06, E08, E10, E12, E15, E19 และกติกา B ทั้ง 5 ข้อ)
+- ทดสอบในเบราว์เซอร์: drill ของแท็บ 1 (ปี › เดือน › รายการ, ACSC เดือน › สัปดาห์), ตัวกรองหมวดไม่เปลี่ยน K1.3/K1.4, state ซิงก์กับ URL
+- ที่ความกว้าง 360 px โหมดมืด: ไม่มีการเลื่อนแนวนอนทั้งหน้าในหน้าเปิดและทุกแท็บ
+- ยังไม่ได้ถ่ายภาพหน้าจอครบทุกขนาด/โหมด (360/768/1280 × สว่าง/มืด) ตามเกณฑ์ C และยังไม่ได้คลิกเปิดลิงก์ข่าวต้นทางทีละลิงก์
+
+## การเปลี่ยนแปลงจากสเปก
+
+- ช่วงเริ่มต้นแท็บ 2 เป็น 2563–2565 (พ.ศ.; ค.ศ. 2020–2022) เพราะ AFNC ปี 2562 ไม่ใช่ปีเต็ม ตามข้อแก้ใน 02 ข้อ 8
+- `build_db.py` ใช้ตามต้นฉบับ ไม่แก้ ค่าที่ได้ตรงกับ 03 ข้อ 4
+- ช่องที่ไม่มีข้อมูลในเฮตแมปแสดงเป็นช่องว่างพร้อมข้อความ "ไม่มีข้อมูล" (ไม่ใช่ลายเฉียง)
+- ตัวกรองบนมือถือยังไม่ยุบเป็นปุ่ม "ตัวกรอง (n)" และ T2 บนมือถือเรียงลงแทนแท็บย่อย
+- C1.1/C1.2 รวมเป็นกราฟเดียวแบบ 2 แผงแกน x ร่วม การแตะชื่อเส้นเพื่อกรองระดับ AI ทำที่ช่องกาเครื่องหมาย "ระดับข่าว AI" แทน
+- ไฮไลต์แถว T1 เมื่อแตะการ์ดข่าวเด่นยังไม่ทำ (การ์ดเปิดข่าวต้นทางในแท็บใหม่)
+- C3.5 แผนที่แสดงเสมอ (ยังไม่ซ่อนใต้ปุ่มบนมือถือ)
+- ไฟล์ `afnc_items.csv` ฉบับเต็มไม่ได้แนบ จำนวนข่าว AI (56) จึงเป็นค่าขั้นต่ำ
+
+## Deploy (Render)
+
+Dash ต้องมีเซิร์ฟเวอร์ Python จึงขึ้น GitHub Pages ไม่ได้ ตัวอย่างบน [Render](https://render.com) (Web Service):
+
+1. push โปรเจกต์ขึ้น GitHub โดยให้ `data/adidur.db` อยู่ใน repo (หรือสั่งสร้างตอน build)
+2. Build command: `pip install -r requirements.txt && python scripts/build_db.py data/raw data/adidur.db`
+3. Start command: `gunicorn app.app:server`

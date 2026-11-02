@@ -1,0 +1,6 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {"name": "adidur", "runtimeExecutable": "python", "runtimeArgs": ["-m", "app.app"], "port": 8050, "cwd": "adidur"}
+  ]
+}
