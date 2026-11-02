@@ -37,7 +37,7 @@ python -m app.app        # เปิด http://127.0.0.1:8050
 
 - แท็บ 1: เลือกปี/เดือนที่กราฟ Deepfake/ข่าว AI หรือกราฟ ACSC ก็ได้ กราฟอื่นเจาะลงช่วงเดียวกัน (ACSC ลงสัปดาห์) หมวดข่าวกรองข่าว AI แต่ไม่กรอง ACSC/AIID เพราะข้อมูลไม่มีตัวเชื่อม
 - แท็บ 2: แตะช่องเฮตแมปเลือกประเด็นและปี มีผลกับเส้นสัดส่วน แท่งซ้อนหมวด กราฟ AIID KPI และตาราง
-- แท็บ 3: เลือกปีที่กราฟไทย/EU/แท่งองค์ประกอบ เลือกประเทศที่แท่งเทียบหรือแผนที่ KPI และอันดับเปลี่ยนตาม
+- แท็บ 3: เลือกปีที่กราฟไทย/EU/แท่งองค์ประกอบ เลือกประเทศที่แท่งเทียบ KPI และอันดับเปลี่ยนตาม
 
 ## การทำงานของ state
 
@@ -64,8 +64,4 @@ python -m app.app        # เปิด http://127.0.0.1:8050
 
 ## Deploy (Render)
 
-Dash ต้องมีเซิร์ฟเวอร์ Python จึงขึ้น GitHub Pages ไม่ได้ ตัวอย่างบน [Render](https://render.com) (Web Service):
-
-1. push โปรเจกต์ขึ้น GitHub โดยให้ `data/adidur.db` อยู่ใน repo (หรือสั่งสร้างตอน build)
-2. Build command: `pip install -r requirements.txt && python scripts/build_db.py data/raw data/adidur.db`
-3. Start command: `gunicorn app.app:server`
+ใช้ `render.yaml` ที่รากของ repo (Render › New › Blueprint) ดูขั้นตอนใน [README หลัก](../README.md#deploy)
