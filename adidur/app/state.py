@@ -6,11 +6,10 @@ TH_MONTHS = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "
 DEFAULTS = {
     1: {"y0": 2015, "y1": 2026, "level": "year", "year": None, "month": None,
         "levels": ["mention", "media_evidence"], "category": None, "imp": None,
-        "acsc_level": "month", "acsc_month": None, "acsc_week": None, "inc_suspect": True},
+        "acsc_week": None, "inc_suspect": True},
     2: {"y0": 2020, "y1": 2022, "level": "year", "year": None, "month": None, "theme": "covid",
         "afnc_category": None},
     3: {"fy": 2024, "groups": ["ASEAN"], "add_rus": False, "level": "group", "iso3": None},
-    4: {"dataset": "aiid_incident"},
 }
 INT_KEYS = {"y0", "y1", "year", "fy"}
 LIST_KEYS = {"levels", "groups"}
@@ -81,4 +80,4 @@ def from_query(tab, query, current=None):
 def parse_tab(query):
     q = parse_qs((query or "").lstrip("?"))
     t = q.get("tab", [""])[0]
-    return t if t in ("1", "2", "3", "4") else "landing"
+    return t if t in ("1", "2", "3") else "landing"

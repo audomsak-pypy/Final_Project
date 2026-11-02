@@ -173,6 +173,18 @@ def main():
       CREATE INDEX IF NOT EXISTS ix_af_year ON afnc_item(year, item_type, verdict_en);
       CREATE INDEX IF NOT EXISTS ix_deb_year ON eu_debunk(year);
       CREATE INDEX IF NOT EXISTS ix_fo ON fotn_score(iso3, data_year);
+      CREATE INDEX IF NOT EXISTS ix_eu_art_deb ON eu_article(debunk_id);
+      CREATE INDEX IF NOT EXISTS ix_eu_theme ON eu_debunk_theme(theme_id, debunk_id);
+      CREATE INDEX IF NOT EXISTS ix_af_theme ON afnc_theme(theme_id, post_id);
+      CREATE INDEX IF NOT EXISTS ix_af_post ON afnc_item(post_id);
+      CREATE INDEX IF NOT EXISTS ix_af_match ON afnc_ai_match(post_id);
+      CREATE INDEX IF NOT EXISTS ix_acsc_month ON acsc_week(month);
+      -- ลิงก์ต้นทางของการหักล้างแต่ละเรื่อง (บทความ disinformation ก่อน) เพื่อให้ตาราง T2 เปิดเร็ว
+      DROP TABLE IF EXISTS eu_debunk_link;
+      CREATE TABLE eu_debunk_link AS SELECT debunk_id, article_url FROM (
+        SELECT debunk_id, article_url, ROW_NUMBER() OVER (PARTITION BY debunk_id
+               ORDER BY (class='disinformation') DESC, article_id) AS rn FROM eu_article) WHERE rn=1;
+      CREATE INDEX IF NOT EXISTS ix_eu_link ON eu_debunk_link(debunk_id);
     """)
     con.commit(); con.close()
     print("สร้าง", DB, "เรียบร้อย")

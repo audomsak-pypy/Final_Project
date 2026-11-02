@@ -1,6 +1,7 @@
 """SQL ทุกตัวจาก 03_DATABASE_SCHEMA.md เป็นฟังก์ชันรับ state คืน DataFrame (SQL ใช้ ค.ศ.)"""
 import os
 import sqlite3
+from functools import lru_cache
 import pandas as pd
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -61,7 +62,7 @@ def _acsc_where(s, inc_suspect):
     p = [s["y0"], s["y1"]]
     if s.get("year") is not None:
         w.append("substr(week_start,1,4)=?"); p.append(str(s["year"]))
-    month = s.get("acsc_month") or s.get("month")
+    month = s.get("month")
     if month:
         w.append("month=?"); p.append(month)
     if not inc_suspect:
@@ -118,11 +119,11 @@ def c14(s):
 
 
 def c15(s):
-    """รายสัปดาห์จาก weekly_panel (51 สัปดาห์ ว่าง 3)"""
+    """รายสัปดาห์จาก weekly_panel (51 สัปดาห์ ว่าง 3); เลือกเดือนแล้วเหลือเฉพาะสัปดาห์ของเดือนนั้น"""
     p = [ACSC_START]
     month_sql = ""
-    if s.get("acsc_month"):
-        month_sql = " AND substr(w.week_start,1,7)=?"; p.append(s["acsc_month"])
+    if s.get("month"):
+        month_sql = " AND substr(w.week_start,1,7)=?"; p.append(s["month"])
     inc = 1 if s["inc_suspect"] else 0
     sql = (f"SELECT w.week_start, w.week_end, "
            f"CASE WHEN {inc}=0 AND w.acsc_flag LIKE 'Suspect%' THEN NULL ELSE w.acsc_cases END AS cases, "
@@ -135,12 +136,17 @@ def c15(s):
 
 
 def c15_month(s):
-    inc = bool(s["inc_suspect"])
-    where = "" if inc else "WHERE COALESCE(flag_type,'')<>'suspect'"
+    """รายเดือนของ ACSC ตามช่วงปี/ปีที่เลือก (ใช้แกนเวลาเดียวกับกราฟอื่น)"""
+    w = ["CAST(substr(month,1,4) AS INT) BETWEEN ? AND ?"]
+    p = [s.get("y0", 2000), s.get("y1", 2100)]
+    if s.get("year") is not None:
+        w.append("substr(month,1,4)=?"); p.append(str(s["year"]))
+    if not s.get("inc_suspect", True):
+        w.append("COALESCE(flag_type,'')<>'suspect'")
     return q(f"SELECT month, COUNT(*) weeks, SUM(cases) cases, SUM(loss_baht) loss_baht, "
              f"1.0*SUM(loss_baht)/SUM(cases) per_case, "
              f"MAX(loss_precision='rounded') any_rounded, MAX(flag_type='suspect') any_suspect "
-             f"FROM acsc_week {where} GROUP BY month ORDER BY month")
+             f"FROM acsc_week WHERE {' AND '.join(w)} GROUP BY month ORDER BY month", p)
 
 
 def t1(s):
@@ -158,6 +164,7 @@ def t1(s):
     return q(sql, p + p2)
 
 
+@lru_cache(maxsize=None)
 def ytd_compare():
     return q("""
 SELECT 'AFNC ข่าวเท็จ' AS metric, SUM(year=2025) y2025, SUM(year=2026) y2026
@@ -168,6 +175,7 @@ UNION ALL SELECT 'AIID Deepfake', SUM(year=2025 AND is_deepfake=1), SUM(year=202
 FROM aiid_incident WHERE substr(date,6,5) <= '10-26'""")
 
 
+@lru_cache(maxsize=None)
 def categories_ai():
     return q("SELECT DISTINCT a.category_th FROM afnc_ai_match m JOIN afnc_item a USING(post_id) ORDER BY 1")["category_th"].tolist()
 
@@ -196,12 +204,11 @@ def denominators(y0, y1):
 
 
 def c24(s):
-    base = "item_type='Verdict' AND verdict_en IN ('Fake','Distorted')"
-    if s["level"] == "year":
-        return q(f"SELECT year t, category_th, COUNT(*) n FROM afnc_item WHERE {base} AND year BETWEEN ? AND ? "
-                 f"GROUP BY year, category_th", (s["y0"], s["y1"]))
-    return q(f"SELECT month t, category_th, COUNT(*) n FROM afnc_item WHERE {base} AND year=? GROUP BY month, category_th",
-             (s["year"],))
+    """ข่าวเท็จ AFNC ของประเด็นที่เลือก แยกตามหมวด (เชื่อมกับ heatmap ผ่าน theme)"""
+    col, rng, p = ("a.year", "a.year BETWEEN ? AND ?", [s["y0"], s["y1"]]) if s["level"] == "year" else                   ("a.month", "a.year=?", [s["year"]])
+    return q(f"SELECT {col} t, a.category_th, COUNT(DISTINCT a.post_id) n FROM afnc_theme th "
+             f"JOIN afnc_item a USING(post_id) WHERE th.theme_id=? AND {rng} GROUP BY {col}, a.category_th",
+             [s["theme"]] + p)
 
 
 def c25(y0, y1):
@@ -235,12 +242,13 @@ def t2(s, limit=300):
     af = q("SELECT 'AFNC' AS source, a.date, a.title AS headline, t.matched_by, t.matched_terms, a.url "
            f"FROM afnc_theme t JOIN afnc_item a USING(post_id) WHERE t.theme_id=?{w_af} ORDER BY a.date DESC", p_af)
     eu = q("SELECT 'EUvsDisinfo' AS source, d.debunk_date AS date, d.keywords AS headline, 'keyword' AS matched_by, "
-           "t.matched_terms, (SELECT article_url FROM eu_article e WHERE e.debunk_id=d.debunk_id "
-           "ORDER BY (e.class='disinformation') DESC, e.article_id LIMIT 1) AS url "
-           f"FROM eu_debunk_theme t JOIN eu_debunk d USING(debunk_id) WHERE t.theme_id=?{w_eu} ORDER BY d.debunk_date DESC", p_eu)
+           "t.matched_terms, l.article_url AS url "
+           f"FROM eu_debunk_theme t JOIN eu_debunk d USING(debunk_id) LEFT JOIN eu_debunk_link l USING(debunk_id) "
+           f"WHERE t.theme_id=?{w_eu} ORDER BY d.debunk_date DESC", p_eu)
     return af, eu
 
 
+@lru_cache(maxsize=None)
 def themes():
     return q("SELECT * FROM theme")
 
@@ -253,8 +261,9 @@ def groups_of(s):
     return g or ["ASEAN"]
 
 
-def k3(fy):
-    return q("SELECT total_score, status_th, data_year, report_edition FROM fotn_score WHERE iso3='THA' AND data_year=?", (fy,))
+def k3(fy, iso3="THA"):
+    return q("SELECT COALESCE(country_th, country) AS name, total_score, status_th, data_year, report_edition "
+             "FROM fotn_score WHERE iso3=? AND data_year=?", (iso3, fy))
 
 
 def c31(s):
@@ -280,12 +289,14 @@ def c32(s):
     return q(sql + " ORDER BY data_year", p)
 
 
+@lru_cache(maxsize=None)
 def c33():
     return q("SELECT f.data_year, f.report_edition, f.total_score, "
              "(SELECT COUNT(*) FROM afnc_item a WHERE a.item_type='Verdict' AND a.year=f.data_year) AS afnc_verdicts "
              "FROM fotn_score f WHERE f.iso3='THA' AND f.data_year BETWEEN 2019 AND 2024 ORDER BY f.data_year")
 
 
+@lru_cache(maxsize=None)
 def c34():
     return q("SELECT year, COUNT(*) AS debunks, SUM(n_articles) AS articles FROM eu_debunk GROUP BY year ORDER BY year")
 
@@ -300,6 +311,7 @@ def rank_all(fy):
              "COUNT(*) OVER () AS n FROM fotn_score WHERE data_year=?) WHERE iso3='THA'", (fy,))
 
 
+@lru_cache(maxsize=None)
 def fotn_years():
     return q("SELECT DISTINCT data_year FROM fotn_score ORDER BY data_year")["data_year"].tolist()
 

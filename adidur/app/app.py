@@ -4,7 +4,7 @@ from dash import Dash, html, dcc, Input, Output, State, no_update, clientside_ca
 from dash.exceptions import PreventUpdate
 
 from .state import DEFAULTS, parse_tab, from_query, to_query
-from .pages import landing, tab1, tab2, tab3, tab4
+from .pages import landing, tab1, tab2, tab3
 
 FONTS = ("https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@700;800&family=Sarabun:wght@400;500;700"
          "&display=swap")
@@ -15,17 +15,16 @@ app = Dash(__name__, title="Adidur — จริงหรือเฟค", suppr
 server = app.server
 app.index_string = app.index_string.replace("<html>", '<html lang="th">')
 
-TABS = [("1", "AI และภัยออนไลน์ในไทย"), ("2", "ประเด็นต่างประเทศกับไทย"), ("3", "เสรีภาพอินเทอร์เน็ต"),
-        ("4", "แหล่งข้อมูล")]
+TABS = [("1", "AI และภัยออนไลน์"), ("2", "ประเด็นต่างประเทศ"), ("3", "เสรีภาพอินเทอร์เน็ต")]
 
 app.layout = html.Div([
     dcc.Location(id="url", refresh=False),
     dcc.Store(id="store-tab1", data=DEFAULTS[1]), dcc.Store(id="store-tab2", data=DEFAULTS[2]),
-    dcc.Store(id="store-tab3", data=DEFAULTS[3]), dcc.Store(id="store-tab4", data=DEFAULTS[4]),
+    dcc.Store(id="store-tab3", data=DEFAULTS[3]),
     dcc.Store(id="store-theme", data="light"), dcc.Store(id="resize-dummy"),
     html.Header([
         dcc.Link("Adidur", href="?", className="brand", refresh=False),
-        html.Nav([dcc.Link(f"แท็บ {k} · {n}", href=f"?tab={k}", id=f"nav-{k}", className="navtab", refresh=False)
+        html.Nav([dcc.Link(n, href=f"?tab={k}", id=f"nav-{k}", className="navtab", refresh=False)
                   for k, n in TABS], className="tabs"),
     ], className="topbar"),
     html.Main([
@@ -33,7 +32,6 @@ app.layout = html.Div([
         html.Div(tab1.layout(), id="page-1", className="page"),
         html.Div(tab2.layout(), id="page-2", className="page"),
         html.Div(tab3.layout(), id="page-3", className="page"),
-        html.Div(tab4.layout(), id="page-4", className="page"),
     ], className="main"),
     html.Div(landing.footer_sections(), id="page-foot"),
     html.Footer("Adidur — จริงหรือเฟค · ข้อมูลทุกชุดเป็นของผู้จัดทำต้นทาง · ปีแสดงเป็น พ.ศ.", className="footer"),
@@ -49,7 +47,7 @@ def show_page(search):
     tab = parse_tab(search)
     styles = [{"display": "block"} if tab == "landing" else {"display": "none"}]
     styles += [{"display": "block"} if tab == k else {"display": "none"} for k, _ in TABS]
-    styles.append({"display": "block"} if tab in ("landing", "1") else {"display": "none"})
+    styles.append({"display": "block"} if tab == "landing" else {"display": "none"})
     classes = ["navtab active" if tab == k else "navtab" for k, _ in TABS]
     return styles + classes
 
@@ -98,7 +96,7 @@ clientside_callback(
     "function(_s){setTimeout(function(){window.dispatchEvent(new Event('resize'));},120);return Date.now();}",
     Output("resize-dummy", "data"), Input("url", "search"))
 
-for mod in (tab1, tab2, tab3, tab4):
+for mod in (tab1, tab2, tab3):
     mod.register(app, None)
 
 

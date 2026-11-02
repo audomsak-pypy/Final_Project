@@ -1,48 +1,45 @@
-"""แท็บ 3 — เสรีภาพอินเทอร์เน็ต (FOTN + AFNC + EUvsDisinfo)"""
+"""แท็บ 3 — เสรีภาพอินเทอร์เน็ต (FOTN + AFNC + EUvsDisinfo)
+ปีและประเทศที่เลือกที่กราฟใดก็ได้ มีผลกับ KPI อันดับ แท่งเทียบ แท่งองค์ประกอบ เส้นไทย/AFNC กราฟ EU และแผนที่"""
 from dash import html, dcc, Input, Output, State, ALL, ctx
 from dash.exceptions import PreventUpdate
 
 from .. import queries as Q, figures as F
-from ..components import chipbar, crumbbar, kpi, notice, note_box, chips, breadcrumb, graph, fmt
+from ..components import kpi, note_box, chips, chipbar, crumbbar, breadcrumb, graph, panel
+from ..exports import filtered_download
 from ..state import DEFAULTS, be
 
 
 def layout():
     years = Q.fotn_years()
     return html.Section([
-        html.H2("คำถามหลัก: ไทยมีคะแนนเสรีภาพอินเทอร์เน็ตอยู่ตรงไหนเมื่อเทียบกับประเทศอื่น และในช่วงเดียวกัน "
-                "AFNC เผยแพร่ผลตรวจข่าวจำนวนเท่าไร", className="question"),
-        html.Div([
-            html.Label(["ปีข้อมูล (พ.ศ.)", dcc.Dropdown(id="t3-fy", clearable=False,
-                       options=[{"label": f"{be(y)} (รายงาน {be(y + 1)})", "value": y} for y in years])]),
-            html.Label(["กลุ่มประเทศ", dcc.Checklist(id="t3-groups", options=[
-                {"label": " อาเซียน (8 ประเทศที่มีข้อมูล)", "value": "ASEAN"}], className="check")]),
-            html.Label(["เปรียบเทียบเพิ่ม", dcc.Checklist(id="t3-rus", options=[
-                {"label": " รัสเซีย", "value": "1"}], className="check")]),
-        ], className="filters"),
-        html.Div("ตัวกรองประเทศและปีมีผลกับคะแนน FOTN เท่านั้น ไม่เปลี่ยนค่าฝั่ง AFNC และ EUvsDisinfo", className="no-effect"),
+        html.H2("ไทยอยู่ตรงไหนในคะแนนเสรีภาพอินเทอร์เน็ต", className="question"),
+        html.Details([
+            html.Summary("ตัวกรอง"),
+            html.Div([
+                html.Label(["ปีข้อมูล", dcc.Dropdown(id="t3-fy", clearable=False,
+                           options=[{"label": f"{be(y)} (รายงาน {be(y + 1)})", "value": y} for y in years])]),
+                html.Label(["กลุ่มประเทศ", dcc.Checklist(id="t3-groups", options=[
+                    {"label": " อาเซียน", "value": "ASEAN"}], className="check")]),
+                html.Label(["เปรียบเทียบเพิ่ม", dcc.Checklist(id="t3-rus", options=[
+                    {"label": " รัสเซีย", "value": "1"}], className="check")]),
+            ], className="filters"),
+        ], open=True, className="filter-box"),
         chipbar("t3"),
         crumbbar("t3-crumb", "t3-back"),
         html.Div([html.Div(id="t3-k1", className="kcell"), html.Div(id="t3-k2", className="kcell"),
                   html.Div(id="t3-k3", className="kcell"), html.Div(id="t3-k4", className="kcell")], className="kpis"),
         html.Div(id="t3-rank", className="rank-line"),
         html.Div([
-            html.Div([html.H3("เทียบประเทศในกลุ่มที่เลือก (ปีเดียว)"), graph("t3-g1"),
-                      html.Div("แตะแท่งเพื่อเจาะลงประเทศ", className="muted small")], className="panel"),
-            html.Div([html.H3("คะแนนมาจากส่วนไหน"), graph("t3-g2"), html.Div(id="t3-info", className="detail")],
-                     className="panel"),
+            panel("เทียบประเทศในกลุ่ม", graph("t3-g1"), tag="แตะแท่งเพื่อเลือกประเทศ"),
+            panel("คะแนนมาจากส่วนไหน", graph("t3-g2"), tag="แตะแท่งปีเพื่อเลือกปี"),
         ], className="two"),
-        html.Div([html.H3("ไทยเท่านั้น · แสดงคู่กันเพื่อเป็นบริบท ไม่ได้วัดความสัมพันธ์"), graph("t3-g3"),
-                  html.Div("ฝั่ง AFNC ไม่เปลี่ยนตามประเทศที่เลือก · ปีแรกของ AFNC ไม่ใช่ปีเต็ม", className="no-effect")],
-                 className="panel wide"),
         html.Div([
-            html.Div([html.H3("บริบท: EUvsDisinfo บันทึกการหักล้างต่อปี"), graph("t3-g4"),
-                      html.Div("ไม่ผูกกับประเทศ · เก็บเฉพาะข้อมูลเท็จฝั่งสนับสนุนรัสเซีย · ตัวกรองด้านบนไม่มีผลกับกราฟนี้",
-                               className="no-effect")], className="panel"),
-            html.Div([html.H3("แผนที่สถานะ (ส่วนเสริม)"), graph("t3-g5"),
-                      html.Div("เสรี / เสรีบางส่วน / ไม่เสรี ตามป้ายใน hover · แตะประเทศเพื่อเจาะลง", className="muted small")],
-                     className="panel"),
+            panel("ไทย: คะแนนและคำตัดสิน AFNC", graph("t3-g3"), tag="ไทยเท่านั้น · เป็นบริบท ไม่ได้วัดความสัมพันธ์"),
+            panel("EUvsDisinfo ต่อปี", graph("t3-g4"), tag="ไม่ผูกกับประเทศ"),
         ], className="two"),
+        panel("แผนที่สถานะ (เสรี · เสรีบางส่วน · ไม่เสรี)", graph("t3-g5"), tag="แตะประเทศเพื่อเลือก", cls="wide"),
+        html.Button("ดาวน์โหลด CSV", id="t3-dl-btn", n_clicks=0, className="btn small-btn"),
+        dcc.Download(id="t3-dl"),
         html.Div([html.Div(id="t3-find"), html.Div(id="t3-limit")], className="two"),
     ], id="tab3-body")
 
@@ -67,7 +64,7 @@ def _update(cur, trig, val):
 
 def _click(cur, gid, pt):
     s = dict(cur)
-    c = pt.get("customdata")
+    c = pt.get("customdata") or pt.get("location")  # แผนที่ส่ง location (iso3) กลับมาแทน customdata
     if isinstance(c, list):
         c = c[0]
     if gid in ("t3-g1", "t3-g5"):
@@ -75,46 +72,37 @@ def _click(cur, gid, pt):
     elif gid == "t3-g2":
         if s["level"] == "group":
             s.update(iso3=str(c), level="country")
-        elif s["level"] == "country":
+        else:
             s.update(fy=int(c), level="year")
-    elif gid == "t3-g3":
+    elif gid in ("t3-g3", "t3-g4"):
         if int(c) in Q.fotn_years():
             s["fy"] = int(c)
     return s
 
 
 def render(s, theme):
-    k = Q.k3(s["fy"])
+    iso = s.get("iso3") or "THA"
+    k = Q.k3(s["fy"], iso)
     groups = Q.groups_of(s)
     c31 = Q.c31(s)
     if len(k):
         r = k.iloc[0]
-        k1 = kpi("คะแนนไทย", f"{int(r['total_score'])}", "จาก 100 (สูง = เสรีมาก)", source="Freedom House")
-        k2 = kpi("สถานะ", r["status_th"], "ตามเกณฑ์ Freedom House")
-        k3 = kpi("ปีข้อมูล", str(be(int(r["data_year"]))), "ปีที่การประเมินครอบคลุม (พ.ศ.)")
-        k4 = kpi("ปีรายงาน", str(be(int(r["report_edition"]))), "ปีที่รายงานตีพิมพ์ (พ.ศ.)")
+        k1 = kpi(f"คะแนน{r['name']}", f"{int(r['total_score'])}", "จาก 100 (สูง = เสรีมาก)", tone="a")
+        k2 = kpi("สถานะ", r["status_th"], "Freedom House", tone="b")
+        k3 = kpi("ปีข้อมูล", str(be(int(r["data_year"]))), "ปีที่ประเมิน (พ.ศ.)", tone="c")
+        k4 = kpi("ปีรายงาน", str(be(int(r["report_edition"]))), "ปีที่ตีพิมพ์ (พ.ศ.)", tone="d")
     else:
-        k1 = kpi("คะแนนไทย", "ไม่มีข้อมูล", "ในปีที่เลือก"); k2 = kpi("สถานะ", "ไม่มีข้อมูล", "")
-        k3 = kpi("ปีข้อมูล", str(be(s["fy"])), ""); k4 = kpi("ปีรายงาน", str(be(s["fy"] + 1)), "")
-    rank_txt = ""
-    th = c31[c31["iso3"] == "THA"]
+        k1 = kpi("คะแนน", "—", "ไม่มีข้อมูลในปีนี้", tone="a"); k2 = kpi("สถานะ", "—", "", tone="b")
+        k3 = kpi("ปีข้อมูล", str(be(s["fy"])), "", tone="c"); k4 = kpi("ปีรายงาน", str(be(s["fy"] + 1)), "", tone="d")
     gname = " + ".join(("อาเซียน" if g == "ASEAN" else g) for g in groups)
-    if len(th):
-        rr = th.iloc[0]
-        rank_txt = f"อันดับ {int(rr['rank_in_group'])} จาก {int(rr['n_in_group'])} ประเทศ (กลุ่ม: {gname}) ปีข้อมูล {be(s['fy'])}"
-        ra = Q.rank_all(s["fy"])
-        if len(ra):
-            rank_txt += f" · ในทุกประเทศที่มีข้อมูลปีนั้น อันดับ {int(ra.iloc[0]['rnk'])} จาก {int(ra.iloc[0]['n'])} ประเทศ"
+    row = c31[c31["iso3"] == iso]
+    if len(row):
+        rr = row.iloc[0]
+        rank_txt = f"{rr['name']} อันดับ {int(rr['rank_in_group'])} จาก {int(rr['n_in_group'])} ประเทศ ({gname}) ปีข้อมูล {be(s['fy'])}"
     else:
-        rank_txt = f"ไทยไม่อยู่ในกลุ่มที่เลือก (กลุ่ม: {gname}) · ไม่คิดอันดับ"
-    g1 = F.fig_c31(c31, s, theme)
+        rank_txt = f"ประเทศที่เลือกไม่อยู่ในกลุ่ม ({gname}) ไม่คิดอันดับ"
     d32 = Q.c32(s)
-    g2 = F.fig_c32(d32, s, theme)
     c33 = Q.c33()
-    g3 = F.fig_c33(c33, theme)
-    g4 = F.fig_c34(Q.c34(), theme)
-    g5 = F.fig_c35(Q.c35(s["fy"]), theme)
-
     items = []
     if s["fy"] != DEFAULTS[3]["fy"]:
         items.append(("fy", f"ปีข้อมูล {be(s['fy'])}"))
@@ -124,40 +112,31 @@ def render(s, theme):
         items.append(("rus", "+ รัสเซีย"))
     if s.get("iso3"):
         items.append(("iso3", f"ประเทศ {s['iso3']}"))
-    crumb_parts = [gname + " " + str(be(s["fy"]))]
+    parts = [f"{gname} {be(s['fy'])}"]
     if s["level"] in ("country", "year"):
-        nm = d32["name"].iloc[0] if len(d32) else s["iso3"]
-        crumb_parts.append(str(nm))
+        parts.append(str(d32["name"].iloc[0]) if len(d32) else str(s["iso3"]))
     if s["level"] == "year":
-        crumb_parts.append(f"ปีข้อมูล {be(s['fy'])} (องค์ประกอบ)")
-    info = html.Div(f"จุดที่เลือก: {crumb_parts[-1]}" + (f" · คะแนนรวม {int(d32.iloc[0][['obstacles_to_access','limits_on_content','violations_of_user_rights']].sum())}" if s["level"] == "year" and len(d32) else ""))
+        parts.append(f"ปีข้อมูล {be(s['fy'])}")
 
-    find = []
-    if rank_txt:
-        find.append(rank_txt)
-    if len(k):
-        find.append(f"คะแนนไทย {int(k.iloc[0]['total_score'])} จาก 100 สถานะ {k.iloc[0]['status_th']} (ปีข้อมูล {be(s['fy'])})")
-        if len(c31):
-            find.append(f"มัธยฐานของกลุ่มที่เลือกคือ {c31['total_score'].median():.1f} คะแนน")
-    a = c33.dropna()
-    if len(a) >= 2:
-        first, last = a.iloc[0], a.iloc[-1]
-        find.append(f"ไทยปีข้อมูล {be(int(first['data_year']))}–{be(int(last['data_year']))}: คะแนน {int(first['total_score'])} → "
-                    f"{int(last['total_score'])} ขณะที่คำตัดสิน AFNC {int(first['afnc_verdicts']):,} → {int(last['afnc_verdicts']):,} "
-                    f"โพสต์ (แสดงคู่กันเป็นบริบท ไม่ได้บอกความสัมพันธ์)")
-    limit = ["คะแนนเป็นการประเมินของผู้เชี่ยวชาญ ไม่ใช่การนับเหตุการณ์",
-             "จำนวนประเทศในแต่ละปีไม่เท่ากัน ประเทศที่ไม่มีในปีใดคือไม่มีข้อมูล ไม่ใช่ 0 และห้ามรวมหลายปีมาจัดอันดับ",
-             "ข้อมูลไม่ได้บอกว่าเสรีภาพสัมพันธ์กับปริมาณข่าวปลอม และไม่ได้บอกว่าประเทศเสรีน้อยมีข่าวปลอมมากหรือน้อยกว่า",
-             "จำนวนคำตัดสินของ AFNC ไม่ใช่ปริมาณข่าวปลอมในสังคม ปีแรกของข้อมูลไม่ใช่ปีเต็ม",
-             "EUvsDisinfo เก็บเฉพาะฝั่งสนับสนุนรัสเซียและไม่ผูกกับประเทศ จึงใช้เป็นบริบทเท่านั้น"]
-    return dict(controls=(s["fy"], s["groups"], ["1"] if s["add_rus"] else []), chips=chips(items, "t3chip", "t3-clear"),
-                crumb=breadcrumb(crumb_parts, "t3-back"), k=[k1, k2, k3, k4], rank=rank_txt, g1=g1, g2=g2, info=info,
-                g3=g3, g4=g4, g5=g5, find=note_box("ข้อค้นพบจากข้อมูล", find, "finding"),
-                limit=note_box("ข้อจำกัด", limit, "limit"))
+    find = [rank_txt]
+    ra = Q.rank_all(s["fy"])
+    if len(ra):
+        find.append(f"ไทย อันดับ {int(ra.iloc[0]['rnk'])} จาก {int(ra.iloc[0]['n'])} ประเทศที่มีข้อมูลปีนั้น")
+    if len(c31):
+        find.append(f"มัธยฐานของกลุ่มคือ {c31['total_score'].median():.0f} คะแนน")
+    limit = ["คะแนนเป็นการประเมินของผู้เชี่ยวชาญ ไม่ใช่การนับเหตุการณ์ และห้ามรวมหลายปีมาจัดอันดับ",
+             "ประเทศที่ไม่มีข้อมูลในปีใดคือไม่มีข้อมูล ไม่ใช่ 0",
+             "ข้อมูลไม่ได้บอกว่าเสรีภาพสัมพันธ์กับปริมาณข่าวปลอม",
+             "จำนวนคำตัดสิน AFNC ไม่ใช่ปริมาณข่าวปลอมในสังคม และ EUvsDisinfo เก็บเฉพาะฝั่งสนับสนุนรัสเซีย"]
+    return dict(controls=(s["fy"], s["groups"], ["1"] if s["add_rus"] else []), chips=chips(items, "t3chip"),
+                crumb=breadcrumb(parts), k=[k1, k2, k3, k4], rank=rank_txt,
+                g1=F.fig_c31(c31, s, theme), g2=F.fig_c32(d32, s, theme), g3=F.fig_c33(c33, theme, s["fy"]),
+                g4=F.fig_c34(Q.c34(), theme, s["fy"]), g5=F.fig_c35(Q.c35(s["fy"]), theme),
+                find=note_box("ข้อค้นพบ", find, "finding"), limit=note_box("ข้อจำกัดของข้อมูล", limit, "limit"))
 
 
 def register(app, stores):
-    graphs = ["t3-g1", "t3-g2", "t3-g3", "t3-g5"]
+    graphs = ["t3-g1", "t3-g2", "t3-g3", "t3-g4", "t3-g5"]
 
     @app.callback(
         Output("store-tab3", "data"),
@@ -202,11 +181,18 @@ def register(app, stores):
         Output("t3-chips", "children"), Output("t3-crumb", "children"), Output("t3-k1", "children"),
         Output("t3-k2", "children"), Output("t3-k3", "children"), Output("t3-k4", "children"),
         Output("t3-rank", "children"), Output("t3-g1", "figure"), Output("t3-g2", "figure"),
-        Output("t3-info", "children"), Output("t3-g3", "figure"), Output("t3-g4", "figure"), Output("t3-g5", "figure"),
+        Output("t3-g3", "figure"), Output("t3-g4", "figure"), Output("t3-g5", "figure"),
         Output("t3-find", "children"), Output("t3-limit", "children"),
         *[Output(g, "clickData") for g in graphs],
         Input("store-tab3", "data"), Input("store-theme", "data"))
     def rend(s, theme):
         r = render(s, theme)
-        return (*r["controls"], r["chips"], r["crumb"], *r["k"], r["rank"], r["g1"], r["g2"], r["info"], r["g3"],
-                r["g4"], r["g5"], r["find"], r["limit"], None, None, None, None)
+        return (*r["controls"], r["chips"], r["crumb"], *r["k"], r["rank"], r["g1"], r["g2"], r["g3"], r["g4"], r["g5"],
+                r["find"], r["limit"], None, None, None, None, None)
+
+    @app.callback(Output("t3-dl", "data"), Input("t3-dl-btn", "n_clicks"), State("store-tab3", "data"),
+                  prevent_initial_call=True)
+    def dl(n, s):
+        if not n:
+            raise PreventUpdate
+        return filtered_download("3", s)

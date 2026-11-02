@@ -7,7 +7,8 @@ import pytest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app import queries as Q  # noqa: E402
 from app.state import DEFAULTS, to_query, from_query, parse_tab  # noqa: E402
-from app.pages import tab3, tab4  # noqa: E402
+from app.pages import tab3
+from app.exports import filtered_download  # noqa: E402
 
 pytestmark = pytest.mark.skipif(not os.path.exists(Q.DB_PATH), reason="ยังไม่ได้สร้าง data/adidur.db")
 
@@ -41,7 +42,7 @@ def test_suspect_switch_blanks_week():
 
 
 def test_csv_has_bom():
-    out = tab4.filtered_download("1", dict(DEFAULTS[1]), dict(DEFAULTS[2]), dict(DEFAULTS[3]))
+    out = filtered_download("1", dict(DEFAULTS[1]))
     assert out["content"].encode("utf-8").startswith(b"\xef\xbb\xbf")
     prep = Q.to_csv_bytes_str(Q.table("theme"))
     assert prep.encode("utf-8")[:3] == b"\xef\xbb\xbf"

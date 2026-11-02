@@ -10,14 +10,14 @@ def fmt(n, d=0):
     return f"{n:,.{d}f}"
 
 
-def kpi(label, value, unit, source=None, extra=None, cid=None):
+def kpi(label, value, unit, source=None, extra=None, cid=None, tone="a"):
     return html.Div([
         html.Div(label, className="kpi-label"),
         html.Div(value, className="kpi-value"),
         html.Div(unit, className="kpi-unit"),
         html.Div(source, className="kpi-source") if source else None,
         html.Div(extra, className="kpi-extra") if extra else None,
-    ], className="kpi", **({"id": cid} if cid else {}))
+    ], className=f"kpi tone-{tone}", **({"id": cid} if cid else {}))
 
 
 def notice(text):
@@ -26,7 +26,15 @@ def notice(text):
 
 
 def note_box(title, items, kind="finding"):
+    """ข้อค้นพบแสดงตรง ๆ; ข้อจำกัดพับเก็บไว้ให้กดอ่าน เพื่อลดข้อความบนหน้า"""
+    if kind == "limit":
+        return html.Details([html.Summary(title), html.Ul([html.Li(i) for i in items])], className="note-box limit")
     return html.Div([html.H4(title), html.Ul([html.Li(i) for i in items])], className=f"note-box {kind}")
+
+
+def panel(title, *children, tag=None, cls=""):
+    head = [html.H3(title)] + ([html.Span(tag, className="tag")] if tag else [])
+    return html.Div([html.Div(head, className="panel-head"), *children], className=f"panel {cls}".strip())
 
 
 def chips(items, chip_type, clear_id=None):
@@ -58,11 +66,15 @@ def link_md(url, text="เปิดต้นฉบับ"):
     return f"[{text}]({url})" if url and str(url) != "nan" else ""
 
 
-def evidence_table(tid, df, columns):
+def evidence_table(tid, df, columns, tooltip=None):
     """columns: [(id, ชื่อ, presentation)]"""
     cols = [{"name": n, "id": i, **({"presentation": "markdown"} if p == "md" else {})} for i, n, p in columns]
+    recs = df.to_dict("records")
+    tips = [{c["id"]: {"value": str(r.get(tooltip) or ""), "type": "text"} for c in cols if c["id"] == "title"}
+            for r in recs] if tooltip else []
     return dash_table.DataTable(
-        id=tid, columns=cols, data=df.to_dict("records"), page_size=15, sort_action="native",
+        id=tid, columns=cols, data=recs, page_size=8, sort_action="native",
+        tooltip_data=tips, tooltip_delay=0, tooltip_duration=None,
         markdown_options={"link_target": "_blank"},
         style_table={"overflowX": "auto"},
         style_cell={"fontFamily": "inherit", "textAlign": "left", "padding": "8px 10px", "maxWidth": "340px",
