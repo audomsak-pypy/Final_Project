@@ -1,4 +1,4 @@
-﻿"""state.py — จัดการสถานะ (state) ของแต่ละแท็บ, การแปลง URL query และฟังก์ชันช่วย พ.ศ."""
+"""state.py — จัดการสถานะ (state) ของแต่ละแท็บ, การแปลง URL query และฟังก์ชันช่วย พ.ศ."""
 from urllib.parse import urlencode, parse_qs
 
 MONTH_NAMES_TH = {
@@ -37,7 +37,7 @@ def format_month_be(yyyy_mm):
         return yyyy_mm
 
 def format_date_be(yyyy_mm_dd):
-    if not yyy_mm_dd or '-' not in str(yyyy_mm_dd):
+    if not yyyy_mm_dd or '-' not in str(yyyy_mm_dd):
         return str(yyyy_mm_dd) if yyyy_mm_dd else ''
     parts = str(yyyy_mm_dd).split('-')
     try:
