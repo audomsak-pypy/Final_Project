@@ -34,10 +34,9 @@ def layout():
             panel("คะแนนมาจากส่วนไหน", graph("t3-g2"), tag="แตะแท่งปีเพื่อเลือกปี"),
         ], className="two"),
         html.Div([
-            panel("ไทย: คะแนนและคำตัดสิน AFNC", graph("t3-g3"), tag="ไทยเท่านั้น · เป็นบริบท ไม่ได้วัดความสัมพันธ์"),
-            panel("EUvsDisinfo ต่อปี", graph("t3-g4"), tag="ไม่ผูกกับประเทศ"),
+            panel("คะแนนเสรีภาพรายปี และคำตัดสิน AFNC ของไทย", graph("t3-g3"), tag="แตะจุดเพื่อเลือกปี · AFNC เป็นของไทยเท่านั้น ไม่ได้วัดความสัมพันธ์"),
+            panel("EUvsDisinfo ต่อปี", graph("t3-g4"), tag="แตะแท่งเพื่อเลือกปี · ไม่ผูกกับประเทศ"),
         ], className="two"),
-        panel("แผนที่สถานะ (เสรี · เสรีบางส่วน · ไม่เสรี)", graph("t3-g5"), tag="แตะประเทศเพื่อเลือก", cls="wide"),
         html.Button("ดาวน์โหลด CSV", id="t3-dl-btn", n_clicks=0, className="btn small-btn"),
         dcc.Download(id="t3-dl"),
         html.Div([html.Div(id="t3-find"), html.Div(id="t3-limit")], className="two"),
@@ -67,7 +66,7 @@ def _click(cur, gid, pt):
     c = pt.get("customdata") or pt.get("location")  # แผนที่ส่ง location (iso3) กลับมาแทน customdata
     if isinstance(c, list):
         c = c[0]
-    if gid in ("t3-g1", "t3-g5"):
+    if gid == "t3-g1":
         s.update(iso3=str(c), level="country")
     elif gid == "t3-g2":
         if s["level"] == "group":
@@ -130,13 +129,13 @@ def render(s, theme):
              "จำนวนคำตัดสิน AFNC ไม่ใช่ปริมาณข่าวปลอมในสังคม และ EUvsDisinfo เก็บเฉพาะฝั่งสนับสนุนรัสเซีย"]
     return dict(controls=(s["fy"], s["groups"], ["1"] if s["add_rus"] else []), chips=chips(items, "t3chip"),
                 crumb=breadcrumb(parts), k=[k1, k2, k3, k4], rank=rank_txt,
-                g1=F.fig_c31(c31, s, theme), g2=F.fig_c32(d32, s, theme), g3=F.fig_c33(c33, theme, s["fy"]),
-                g4=F.fig_c34(Q.c34(), theme, s["fy"]), g5=F.fig_c35(Q.c35(s["fy"]), theme),
+                g1=F.fig_c31(c31, s, theme), g2=F.fig_c32(d32, s, theme), g3=F.fig_c33(c33, theme, s["fy"], Q.score_series(iso) if iso != "THA" else None, str(k.iloc[0]["name"]) if len(k) else iso),
+                g4=F.fig_c34(Q.c34(), theme, s["fy"]),
                 find=note_box("ข้อค้นพบ", find, "finding"), limit=note_box("ข้อจำกัดของข้อมูล", limit, "limit"))
 
 
 def register(app, stores):
-    graphs = ["t3-g1", "t3-g2", "t3-g3", "t3-g4", "t3-g5"]
+    graphs = ["t3-g1", "t3-g2", "t3-g3", "t3-g4"]
 
     @app.callback(
         Output("store-tab3", "data"),
@@ -181,14 +180,14 @@ def register(app, stores):
         Output("t3-chips", "children"), Output("t3-crumb", "children"), Output("t3-k1", "children"),
         Output("t3-k2", "children"), Output("t3-k3", "children"), Output("t3-k4", "children"),
         Output("t3-rank", "children"), Output("t3-g1", "figure"), Output("t3-g2", "figure"),
-        Output("t3-g3", "figure"), Output("t3-g4", "figure"), Output("t3-g5", "figure"),
+        Output("t3-g3", "figure"), Output("t3-g4", "figure"),
         Output("t3-find", "children"), Output("t3-limit", "children"),
         *[Output(g, "clickData") for g in graphs],
         Input("store-tab3", "data"), Input("store-theme", "data"))
     def rend(s, theme):
         r = render(s, theme)
-        return (*r["controls"], r["chips"], r["crumb"], *r["k"], r["rank"], r["g1"], r["g2"], r["g3"], r["g4"], r["g5"],
-                r["find"], r["limit"], None, None, None, None, None)
+        return (*r["controls"], r["chips"], r["crumb"], *r["k"], r["rank"], r["g1"], r["g2"], r["g3"], r["g4"],
+                r["find"], r["limit"], None, None, None, None)
 
     @app.callback(Output("t3-dl", "data"), Input("t3-dl-btn", "n_clicks"), State("store-tab3", "data"),
                   prevent_initial_call=True)

@@ -296,6 +296,12 @@ def c33():
              "FROM fotn_score f WHERE f.iso3='THA' AND f.data_year BETWEEN 2019 AND 2024 ORDER BY f.data_year")
 
 
+def score_series(iso3):
+    """คะแนนรวมรายปีของประเทศที่เลือก (ปีเดียวกับกราฟของไทย)"""
+    return q("SELECT data_year, total_score FROM fotn_score WHERE iso3=? AND data_year BETWEEN 2019 AND 2024 "
+             "ORDER BY data_year", (iso3,))
+
+
 @lru_cache(maxsize=None)
 def c34():
     return q("SELECT year, COUNT(*) AS debunks, SUM(n_articles) AS articles FROM eu_debunk GROUP BY year ORDER BY year")

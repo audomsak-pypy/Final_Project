@@ -316,18 +316,23 @@ def fig_c32(df, s, theme):
     return fig
 
 
-def fig_c33(df, theme, fy=None):
+def fig_c33(df, theme, fy=None, other=None, other_name=""):
     t = tok(theme)
     xl = [f"{be(y)}" for y in df["data_year"]]
     fig = make_subplots(rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.16,
                         subplot_titles=("คะแนนไทย · FOTN (0–100)", "คำตัดสิน · AFNC (โพสต์)"))
     fig.add_trace(go.Scatter(x=xl, y=df["total_score"], mode="lines+markers", customdata=df["data_year"],
                              line=dict(color=t["accent"], width=3), marker=dict(size=9),
-                             hovertemplate="ปีข้อมูล %{x}: %{y} คะแนน<extra></extra>"), 1, 1)
+                             name="ไทย", hovertemplate="ไทย ปีข้อมูล %{x}: %{y} คะแนน<extra></extra>"), 1, 1)
+    if other is not None and len(other):
+        d = dict(zip(other["data_year"], other["total_score"]))
+        fig.add_trace(go.Scatter(x=xl, y=[d.get(y) for y in df["data_year"]], mode="lines+markers",
+                                 customdata=df["data_year"], name=other_name, line=dict(color=t["blue"], width=3, dash="dot"),
+                                 marker=dict(size=9), hovertemplate=other_name + " ปีข้อมูล %{x}: %{y} คะแนน<extra></extra>"), 1, 1)
     fig.add_trace(go.Scatter(x=xl, y=df["afnc_verdicts"], mode="lines+markers", customdata=df["data_year"],
                              line=dict(color=t["teal"], width=3), marker=dict(size=9),
                              hovertemplate="ปี %{x}: %{y:,} คำตัดสิน<extra></extra>"), 2, 1)
-    fig.update_layout(**base_layout(theme, 380, showlegend=False))
+    fig.update_layout(**base_layout(theme, 380, showlegend=other is not None, legend=dict(orientation="h", y=1.12)))
     if fy in list(df["data_year"]):
         _band(fig, list(df["data_year"]).index(fy), t, row="all", col=1)
     fig.update_xaxes(type="category", gridcolor=t["line"], color=t["muted"])
