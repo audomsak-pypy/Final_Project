@@ -1,45 +1,165 @@
 # Adidur — จริงหรือเฟค
-Dashboard ภาษาไทยสำหรับ Basic Programming for Data Scientist and Data Visualization: AI ข่าวปลอม และภัยออนไลน์ มองโลกเปรียบเทียบไทย ใช้ Dash + Plotly + SQLite และข้อมูลจริง 4 ไฟล์ใน Datasets
 
-## เริ่มใช้งาน (Python 3.12)
+เว็บไซต์ Dashboard ภาษาไทยสำหรับรายวิชา **Basic Programming for Data Scientist and Data Visualization** ภายใต้หัวข้อ **“AI ข่าวปลอม และภัยออนไลน์: มองโลก เปรียบเทียบไทย”**
+
+พัฒนาด้วย **Python + Dash + Plotly + SQLite** โดยอ่านข้อมูลจริงจากไฟล์ต้นฉบับใน `Datasets/` และแสดงหลักฐานที่เปิดตรวจสอบย้อนกลับได้
+
+> **สถานะการตรวจรับ:** Browser ผ่าน **24/24 กรณี** และ pytest ผ่าน **53 จาก 57 ข้อ** ยังมี 4 assertions ที่ไม่ตรงค่าอ้างอิงเรื่องข่าว AI กฎที่ใช้อยู่คำนวณได้ 52 โพสต์ เทียบกับ 56 ในเอกสาร จึงยังไม่ถือว่าผ่าน Definition of Done ครบทั้งหมด ดู [รายงานทดสอบ](docs/TEST_REPORT.md) และ [เหตุผลการตัดสินใจ](docs/DECISIONS.md)
+
+## ความสามารถของเว็บไซต์
+
+| หน้า | สิ่งที่สำรวจได้ |
+|---|---|
+| หน้าเปิด | Adidur — จริง / หรือ / เฟค พร้อมปุ่มเข้าสู่ Dashboard และคำอธิบายโครงการ |
+| 1. AI และภัยออนไลน์ในไทย | เหตุการณ์ Deepfake จาก AIID, ข่าวเกี่ยวกับ AI จาก AFNC, ข่าวยอดเข้าชมสูง/ต่ำ และคดี/ความเสียหายจาก ACSC |
+| 2. ประเด็นต่างประเทศกับไทย | Heatmap 7 ประเด็น สัดส่วนต่อแหล่งข้อมูล กราฟเปรียบเทียบ และหลักฐานจาก EUvsDisinfo กับ AFNC |
+| 3. เสรีภาพอินเทอร์เน็ต | คะแนนไทย อันดับในปีเดียวกัน องค์ประกอบคะแนน และบริบทคำตัดสินของ AFNC |
+| 4. แหล่งข้อมูลและดาวน์โหลด | Metadata สูตร KPI กฎค้นคำ พจนานุกรม และดาวน์โหลดต้นฉบับ/ข้อมูลที่เตรียมแล้ว/ผลกรอง |
+
+ทุกแท็บใช้ข้อมูลจริง มีตัวกรอง เจาะข้อมูล ย้อนระดับ ตารางหลักฐาน และลิงก์ต้นทาง URL เก็บตัวกรองของแต่ละแท็บเพื่อเปิดซ้ำได้ รองรับโหมดสว่าง/มืดตามระบบและฟอนต์ไทยที่เก็บในโครงการ
+
+**ข้อจำกัดในการตีความ:** การวางข้อมูลร่วมเวลาไม่ยืนยันว่า AI ทำให้คดีเพิ่ม ไม่มีคีย์เชื่อมข่าวต่อข่าวข้ามแหล่ง จำนวนข่าว AFNC ไม่ใช่ปริมาณข่าวปลอมทั้งหมดในสังคม และยอดเข้าชมไม่ใช่ความรุนแรงหรือความน่าเชื่อถือ
+
+## ติดตั้งและเปิดเว็บ
+
+คำสั่งด้านล่างทดสอบบน **Debian 13 / Python 3.12.14** ใช้ branch `SU`
+
+### 1. ดาวน์โหลดโครงการ
+
+```bash
+git clone --branch SU https://github.com/audomsak-pypy/Final_Project.git
+cd Final_Project
+```
+
+หากมี checkout อยู่แล้ว ให้เข้าโฟลเดอร์โครงการและตรวจว่าใช้ branch `SU` ก่อนทำงาน ไม่ต้อง clone ซ้ำ
+
+### 2. ติดตั้ง dependencies และเตรียมฐานข้อมูล
+
 ```bash
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python scripts/build_db.py --input Datasets --output data/adidur.db
-.venv/bin/python scripts/expected_values.py data/adidur.db
-.venv/bin/python -m pytest -q
+```
+
+Pipeline อ่านไฟล์ต้นฉบับโดยไม่แก้เนื้อหา สร้าง SQLite, CSV แบบ UTF-8 พร้อม BOM และ manifest สำหรับตรวจสอบย้อนกลับ สามารถรันซ้ำได้โดยไม่เตรียมข้อมูลด้วยมือ
+
+### 3. เปิดเว็บไซต์
+
+```bash
 .venv/bin/python -m app.app
 ```
-เซิร์ฟเวอร์ใช้ port8050 (เปลี่ยนด้วย PORT) เปิดผ่านเบราว์เซอร์บนเครื่องที่รัน แอปสร้างฐานให้อัตโนมัติถ้ายังไม่มี ไม่ต้องเตรียม Excel ด้วยมือ ทุกคำสั่งรันจาก root repo หากเปิดจาก cloud นี้ต้องให้ execution tool อนุญาต socket/network ตาม policy ระบบ
 
-**ผลทดสอบข้อมูลยังมี mismatch:** กฎ AI ที่ระบุชัดให้52 ไม่ตรง reference56 มี 4 regression assertions ไม่ผ่าน (E02 สองข้อ E03 E22) รายละเอียดใน docs/DECISIONS.md และ data/ai_rule_audit.json ไม่ใช่ข่าวปลอมทั้งหมดของสังคม และไม่ใช่การยืนยันว่า AI สร้างข่าวทั้งหมด
+เปิดเบราว์เซอร์บนเครื่องที่รันไปที่ **http://127.0.0.1:8050** หยุดเซิร์ฟเวอร์ด้วย `Ctrl+C` หากยังไม่มีฐานข้อมูล แอปจะสร้างให้อัตโนมัติ ใช้ตัวแปร `PORT` เพื่อเปลี่ยนพอร์ต
 
-## ใช้งาน
-หน้าเปิด → สำรวจ Dashboard → 4 แท็บ เลือกตัวกรองแล้วกดนำไปใช้ คลิกกราฟปี→เดือน→รายการ, ACSC เดือน→สัปดาห์, FOTN ประเทศ→ปี→องค์ประกอบ ปุ่มย้อนระดับและชิปลบไม่ล้างมิติอื่น ลิงก์ URL เก็บ state ของทุกแท็บ reload/back/forward ได้ ข่าวเด่นเปิดต้นทางหรือเน้นหลักฐาน ตารางแบ่งหน้า export ยังครบทุกแถว แท็บ4แยกต้นฉบับ/เตรียมแล้ว/ผลกรอง ไม่ส่งเนื้อหาข่าวทั้งฐานเข้า Store
+ตรวจว่าเซิร์ฟเวอร์พร้อมด้วย `GET /health` ซึ่งควรตอบ `status: ok` และ `afnc_rows: 17726`
 
-โหมดสว่าง/มืดตามระบบ ฟอนต์ไทย local พร้อม OFL กราฟที่ตัวกรองไม่มีผลมีป้าย ข้อมูลไม่มีรายงานเป็น NULL ไม่แทนด้วย0 ปีแสดง พ.ศ. ฐาน/URL ค.ศ.
+## วิธีใช้งาน
 
-## ทดสอบและหลักฐาน
+1. กด **สำรวจ Dashboard** แล้วเลือกหนึ่งใน 4 แท็บ
+2. เลือกตัวกรองและกด **นำตัวกรองไปใช้** เพื่ออัปเดตข้อมูลพร้อมกัน
+3. คลิกจุดหรือแท่งกราฟเพื่อเจาะข้อมูล หรือเลือกผ่านตัวกรองด้วยคีย์บอร์ด
+4. ใช้ **ย้อนระดับ**, ชิปลบตัวกรอง หรือ **ล้างตัวกรอง** ตามต้องการ
+5. เปิดหลักฐานต้นทาง หรือดาวน์โหลด CSV ซึ่งรวมทุกแถวที่ตรงตัวกรอง ไม่จำกัดเฉพาะหน้าตารางที่แสดง
+
+ปีบนหน้าจอเป็น **พ.ศ.** ส่วนฐานข้อมูลและ URL เก็บ **ค.ศ.** ตัวกรองระดับ AI/หมวด/แอบอ้างมีผลเฉพาะ AFNC และไม่กรอง ACSC หรือ AIID ตัวกรองประเทศมีผลเฉพาะ FOTN ช่องที่ไม่มีรายงานเก็บเป็น `NULL` ไม่เติมศูนย์
+
+## ข้อมูลต้นฉบับและผลลัพธ์
+
+| ไฟล์ใน `Datasets/` | การใช้งาน |
+|---|---|
+| `AIID_Excel_Export-20261026.xlsx` | เหตุการณ์ AI จากชีต `Incidents` ใช้ `header=2` |
+| `freedom_on_the_net_scores.csv` | คะแนนเสรีภาพอินเทอร์เน็ตตามประเทศและปีข้อมูล |
+| `euvsdisinfo_base.csv` | แยกการหักล้างออกจากบทความและ keywords เพื่อลดการนับซ้ำ |
+| `thai-disinfo-scam-dataset.xlsx` | AFNC, ACSC, ปฏิทินรายสัปดาห์ และพจนานุกรมข้อมูล |
+
+ผลลัพธ์หลังเตรียมข้อมูล:
+
+- `data/adidur.db`: ฐานข้อมูล SQLite
+- `data/processed/*.csv`: ตารางข้อมูลที่เตรียมแล้ว พร้อม BOM
+- `data/manifest.json`: SHA-256, schema, จำนวนแถว, ค่าว่าง, coverage และ mapping ของ ACSC
+- `data/expected_results.json`: ผลเทียบค่าอ้างอิง
+- `data/ai_rule_audit.json`: หลักฐานตรวจความต่างของกฎ AI
+
+SQLite และ CSV ที่เตรียมแล้วถูก `.gitignore` จึงไม่อยู่ใน GitHub checkout ใหม่ ให้สร้างด้วยคำสั่ง pipeline ด้านบน ไฟล์ต้นฉบับทั้ง 4 ไฟล์ยังอยู่ที่เดิมและตรวจ SHA-256 แล้วว่าไม่เปลี่ยน
+
+## การทดสอบและผลจริง
+
+ให้รันคำสั่งตรวจสอบแยกจากคำสั่งเปิดเว็บ เพราะชุดอ้างอิงปัจจุบันยังคืน **exit code 1** จากความต่างที่บันทึกไว้
+
 ```bash
-.venv/bin/python -m pytest -q --junitxml=data/pytest-results.xml
-.venv/bin/python scripts/browser_check.py
+.venv/bin/python scripts/expected_values.py data/adidur.db
+.venv/bin/python -m pytest -q
 .venv/bin/python scripts/audit_ai_rules.py
 ```
-Browser check ต้องเปิดแอปก่อน ใช้ Chromium ผ่าน Playwright ตั้ง CHROMIUM_PATH ได้ ค่าเริ่มต้น /usr/bin/chromium ภาพและผลอยู่ tests/artifacts ไม่อ้างเป็นอุปกรณ์จริง ดู docs/TEST_REPORT.md
+
+| ชุดทดสอบ | ผลล่าสุดที่บันทึก |
+|---|---|
+| ค่าอ้างอิงจากเอกสาร | 25 ผ่าน / 4 ไม่ผ่าน จาก 29 assertions |
+| pytest รวม | 53 ผ่าน / 4 ไม่ผ่าน จาก 57 tests |
+| กติกาการกรองและส่งออก | 28/28 ผ่าน ซึ่งรวมอยู่ใน pytest ข้างต้น |
+| Chromium Browser | 24/24 ผ่าน รวม console ไม่มี error ในรอบสุดท้าย |
+| ขนาดและโหมดที่ตรวจ | 360 / 768 / 1280px ทั้งสว่างและมืด สำหรับหน้าเปิดและแท็บ 1 |
+
+**4 assertions ที่ยังไม่ผ่าน:** E02 จำนวน/ระดับข่าว AI, E02 จำนวนรายปี, E03 หมวดข่าว AI และ E22 ข่าว AI ในช่วงเทียบเดียวกัน ไม่ได้แก้ค่าคาดหวังหรือปิด assertions เพื่อให้ผ่าน กฎปัจจุบันได้ **52 โพสต์ = mention 27 + media_evidence 25** และปี 2569 ได้ 40 โพสต์ เทียบเอกสารที่ระบุ 56 และ 44 ตามลำดับ ทุกแถวยังคงสถานะ “ต้องตรวจสอบ” เนื่องจาก content ใน Excel ถูกตัดที่ 500 ตัวอักษรและยังไม่มี CSV เนื้อหาเต็ม
+
+### ตรวจผ่านเบราว์เซอร์
+
+เปิดเซิร์ฟเวอร์แอปไว้ก่อน แล้วรันในอีก terminal:
+
+```bash
+.venv/bin/python scripts/browser_check.py
+```
+
+ต้องมี **Chromium executable** แยกจากแพ็กเกจ Python Playwright สคริปต์ใช้ `/usr/bin/chromium` เป็นค่าเริ่มต้น หรือกำหนด `CHROMIUM_PATH` ให้ตรงเครื่อง สภาพแวดล้อม cloud ที่ทดสอบมี Chromium ติดตั้งไว้แล้ว
+
+ภาพหน้าจอและผลรอบใหม่จะอยู่ใน `tests/artifacts/` ซึ่งถูก gitignore ส่วนสรุปผลรอบส่งมอบติดตามใน Git ที่ [data/browser-results.json](data/browser-results.json) และ [data/pytest-results.xml](data/pytest-results.xml) การจำลอง viewport ไม่ใช่การทดสอบบน iPad หรืออุปกรณ์สัมผัสจริง
+
+## โครงสร้างโครงการ
+
+```text
+Datasets/                 ข้อมูลต้นฉบับ 4 ไฟล์
+app/
+  app.py                  Dash server, callbacks และ download routes
+  state.py                ตัวกรอง URL และการแสดงปี
+  queries.py              SQL แบบ bind parameters ที่ใช้ร่วมกัน
+  figures.py              กราฟ Plotly และ theme
+  pages/                  หน้าเปิดและ 4 แท็บ
+  components/             ตัวกรอง KPI ข่าว หลักฐาน และคำอธิบาย
+  assets/                 CSS และฟอนต์ไทยพร้อมใบอนุญาต OFL
+scripts/                  สร้างฐาน ตรวจค่า ตรวจ browser และแพ็กส่งมอบ
+data/                     ฐานที่สร้างซ้ำได้ manifest และผลตรวจ
+docs/                     เอกสารโครงการ
+tests/                    การทดสอบ
+render.yaml               การตั้งค่า Python Web Service สำหรับ Render
+```
+
+## เอกสารโครงการ
+
+- [BRD](docs/BRD.md): วัตถุประสงค์ ขอบเขต สูตร และเกณฑ์ตรวจรับ
+- [Requirements traceability](docs/REQUIREMENTS_TRACEABILITY.md): เชื่อมข้อกำหนดกับองค์ประกอบ Dashboard และการทดสอบ
+- [การเตรียมข้อมูล](docs/DATA_PREPARATION.md)
+- [การตัดสินใจและความต่างจากสเปก](docs/DECISIONS.md)
+- [รายงานทดสอบ](docs/TEST_REPORT.md)
+- [เอกสารอ้างอิง 01–05](docs/reference/)
 
 ## Deploy บน Python server
-เตรียม render.yaml สำหรับ Render Python Web Service เลือก branch SU และใช้ build/start command ในไฟล์ เซิร์ฟเวอร์ production ใช้ Gunicorn:
+
+แอปต้องมี **Python server** จึงไม่สามารถเผยแพร่ Dash โดยตรงบน GitHub Pages ได้ ยังไม่มีการ deploy จริงในงานนี้
+
+มี `render.yaml` สำหรับ Render Python Web Service โดยเลือก branch `SU` สร้างฐานระหว่าง build และใช้ Gunicorn เป็น production server ตัวอย่างรันในเครื่อง:
+
 ```bash
 .venv/bin/gunicorn app.app:server --bind 0.0.0.0:8050 --workers 2
 ```
-หากบริการกำหนด PORT ให้ใช้ `$PORT` แทน8050 ฐานสร้างระหว่าง build ไม่ต้องใช้ credential ของแหล่งข้อมูล Dashboard ไม่รองรับ GitHub Pages โดยตรงเพราะต้องมี Python server ยังไม่ deploy/push และการเข้าถึงคู่มือ Render ฉบับปัจจุบันถูก HTTP policy403 จึงต้องตรวจ https://render.com/docs/deploy-plotly-dash ก่อนเผยแพร่จริง
 
-## เอกสารและผลลัพธ์
-- docs/BRD.md และ docs/REQUIREMENTS_TRACEABILITY.md
-- docs/DATA_PREPARATION.md และ docs/DECISIONS.md
-- docs/TEST_REPORT.md, data/manifest.json, data/expected_results.json
-- data/adidur.db และ data/processed/*.csv เป็นผลสร้างซ้ำในเครื่อง ไม่ commit ไฟล์ขนาดใหญ่
-- docs/reference/ เก็บเอกสาร01–05 ที่ผู้ใช้ให้เพื่ออ้างอิง ไม่ใช่ข้อมูลภายนอกที่ใช้สั่งรันโดยอัตโนมัติ
+หากบริการกำหนดพอร์ตผ่าน `PORT` ให้ใช้ `$PORT` แทน `8050` การเข้าถึง [คู่มือ Render](https://render.com/docs/deploy-plotly-dash) จากเครื่องทดสอบถูก HTTP policy ตอบ 403 จึงยังไม่ได้ตรวจคู่มือบริการฉบับปัจจุบัน ต้องตรวจการตั้งค่ากับบริการอีกครั้งก่อนเผยแพร่ ไม่ถือว่าไฟล์ configuration เป็นหลักฐาน deploy สำเร็จ
 
-## การเปลี่ยนแปลงจากสเปก
-ใช้ Datasets ตามตำแหน่งจริงแทน data/raw; ไม่มี build_db/expected_values เดิม จึงสร้างใหม่; E02/E03/E22 ยังไม่ตรง reference ไม่แก้ข้อมูลต้นฉบับหรือ hardcode56; ไม่มี C3.5 เพราะส่วนเสริม; ใช้ผู้จัดทำ [ชื่อผู้จัดทำ]; ไม่มี full-content AFNC CSV/PDF จึงไม่ได้อ้างว่าอ่านแล้ว ไม่สรุปสาเหตุ การแพร่ข้ามประเทศ หรือเวลาที่ไทยตามหลังโลก
+## ข้อจำกัดและการเปลี่ยนแปลงจากสเปก
+
+- ใช้ `Datasets/` ตามตำแหน่งจริงแทน `data/raw/` ไม่ย้ายหรือแก้ต้นฉบับ
+- ไม่มีสคริปต์ `build_db.py` และ `expected_values.py` เดิมแนบมา จึงสร้างใหม่และคงค่าอ้างอิงไว้ตรวจ
+- ยังมีความต่าง E02/E03/E22 ที่ต้องตรวจเทียบกฎหรือรายการอ้างอิงเดิม ไม่ hardcode ตัวเลข 56 ลง Dashboard
+- ไม่มี CSV เนื้อหาเต็มของ AFNC หรือ PDF คู่มือใน checkout จึงไม่ได้อ้างว่าอ่านหรือตรวจเนื้อหาเต็มแล้ว
+- C3.5 แผนที่เป็นส่วนเสริมและยังไม่ได้พัฒนา
+- ผู้จัดทำใช้ `[ชื่อผู้จัดทำ]` จนกว่าจะได้รับชื่อจริง
+- ไม่ใช้ข้อมูลนี้สรุปสาเหตุ การนำเข้าข่าวจากต่างประเทศ หรือเวลาที่ไทยตามหลังโลก
