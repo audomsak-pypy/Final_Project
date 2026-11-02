@@ -69,14 +69,15 @@ def heatmap(frame,s,dark=False):
             else:
                 r=f.iloc[0];zz.append(r.pct);tt.append(f'{r.pct:.1f}%');cc.append([year,tid,int(r.n),int(r.denominator)])
         z.append(zz);texts.append(tt);custom.append(cc)
-    labels=[THEMES[k][0]+(' · จัดกลุ่มต่างวิธี' if k in ('health','finance','politics') else '') for k in ids]
-    fig=go.Figure(go.Heatmap(x=[be(x) for x in years],y=labels,z=z,zmin=0,zmax=100,colorscale=SCALE,customdata=custom,text=texts,texttemplate='%{text}',textfont=dict(color='#1C0F08'),hoverongaps=False,colorbar=dict(title='%',tickvals=[0,25,50,75,100],thickness=12),hovertemplate='%{y}<br>%{x}: %{customdata[2]} / %{customdata[3]} = %{z:.1f}%<extra></extra>'))
+    short={'other_conflict':'ความขัดแย้งอื่น','politics':'การเมือง/นโยบาย','finance':'การเงิน/เศรษฐกิจ'}
+    labels=[short.get(k,THEMES[k][0])+('<br>จัดกลุ่มต่างวิธี' if k in ('health','finance','politics') else '') for k in ids]
+    fig=go.Figure(go.Heatmap(x=[be(x) for x in years],y=labels,z=z,zmin=0,zmax=100,colorscale=SCALE,customdata=custom,text=texts,texttemplate='%{text}',textfont=dict(color='#1C0F08'),hoverongaps=False,colorbar=dict(title=dict(text='%'),tickvals=[0,25,50,75,100],thickness=12,len=0.8,y=0.5,x=1.02),hovertemplate='%{y}<br>%{x}: %{customdata[2]} / %{customdata[3]} = %{z:.1f}%<extra></extra>'))
     # Missing values have their own hatch-like text; never borrow the zero color.
     for i,tid in enumerate(ids):
         for j,year in enumerate(years):
             if z[i][j] is None:fig.add_annotation(x=be(year),y=labels[i],text='╱ ไม่มีข้อมูล',showarrow=False,font=dict(size=10,color='#C9B09A' if dark else '#6B5244'))
             elif z[i][j]>=60:fig.add_annotation(x=be(year),y=labels[i],text=texts[i][j],showarrow=False,font=dict(color='white'))
-    theme(fig,dark);fig.update_layout(height=450,margin=dict(l=20,r=20,t=25,b=55));return fig
+    theme(fig,dark);fig.update_yaxes(automargin=False,tickfont=dict(size=10));fig.update_xaxes(type='category',automargin=False);fig.update_layout(height=450,margin=dict(l=125,r=55,t=25,b=55));return fig
 
 def theme_line(e,a,s,dark=False):
     fig=go.Figure();years=list(range(s['y0'],s['y1']+1))

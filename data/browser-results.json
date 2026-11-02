@@ -1,0 +1,211 @@
+{
+  "results": [
+    {
+      "test": "viewport-360-light-tab0",
+      "status": "PASS",
+      "detail": {
+        "seconds": 1.443,
+        "graphs": 0
+      }
+    },
+    {
+      "test": "viewport-360-light-tab1",
+      "status": "PASS",
+      "detail": {
+        "seconds": 1.709,
+        "graphs": 3
+      }
+    },
+    {
+      "test": "viewport-360-dark-tab0",
+      "status": "PASS",
+      "detail": {
+        "seconds": 1.384,
+        "graphs": 0
+      }
+    },
+    {
+      "test": "viewport-360-dark-tab1",
+      "status": "PASS",
+      "detail": {
+        "seconds": 1.424,
+        "graphs": 3
+      }
+    },
+    {
+      "test": "viewport-768-light-tab0",
+      "status": "PASS",
+      "detail": {
+        "seconds": 1.337,
+        "graphs": 0
+      }
+    },
+    {
+      "test": "viewport-768-light-tab1",
+      "status": "PASS",
+      "detail": {
+        "seconds": 1.495,
+        "graphs": 3
+      }
+    },
+    {
+      "test": "viewport-768-dark-tab0",
+      "status": "PASS",
+      "detail": {
+        "seconds": 1.334,
+        "graphs": 0
+      }
+    },
+    {
+      "test": "viewport-768-dark-tab1",
+      "status": "PASS",
+      "detail": {
+        "seconds": 1.415,
+        "graphs": 3
+      }
+    },
+    {
+      "test": "viewport-1280-light-tab0",
+      "status": "PASS",
+      "detail": {
+        "seconds": 1.35,
+        "graphs": 0
+      }
+    },
+    {
+      "test": "viewport-1280-light-tab1",
+      "status": "PASS",
+      "detail": {
+        "seconds": 1.41,
+        "graphs": 3
+      }
+    },
+    {
+      "test": "viewport-1280-dark-tab0",
+      "status": "PASS",
+      "detail": {
+        "seconds": 1.36,
+        "graphs": 0
+      }
+    },
+    {
+      "test": "viewport-1280-dark-tab1",
+      "status": "PASS",
+      "detail": {
+        "seconds": 1.409,
+        "graphs": 3
+      }
+    },
+    {
+      "test": "tab-1",
+      "status": "PASS",
+      "detail": {
+        "graphs": 3,
+        "overflow": false
+      }
+    },
+    {
+      "test": "tab-2",
+      "status": "PASS",
+      "detail": {
+        "graphs": 5,
+        "overflow": false
+      }
+    },
+    {
+      "test": "tab-3",
+      "status": "PASS",
+      "detail": {
+        "graphs": 4,
+        "overflow": false
+      }
+    },
+    {
+      "test": "tab-4",
+      "status": "PASS",
+      "detail": {
+        "graphs": 0,
+        "overflow": false
+      }
+    },
+    {
+      "test": "year-drill",
+      "status": "PASS",
+      "detail": {
+        "y0": 2015,
+        "y1": 2026,
+        "level": "month",
+        "year": 2026,
+        "month": null,
+        "levels": [
+          "mention",
+          "media_evidence"
+        ],
+        "category": null,
+        "imp": null,
+        "inc_suspect": true,
+        "acsc_level": "month",
+        "acsc_month": null,
+        "acsc_week": null,
+        "page": 0,
+        "selected": null,
+        "detail": "timeline1: 2569 · 126"
+      }
+    },
+    {
+      "test": "month-drill",
+      "status": "PASS",
+      "detail": {
+        "y0": 2015,
+        "y1": 2026,
+        "level": "items",
+        "year": 2026,
+        "month": "2026-01",
+        "levels": [
+          "mention",
+          "media_evidence"
+        ],
+        "category": null,
+        "imp": null,
+        "inc_suspect": true,
+        "acsc_level": "month",
+        "acsc_month": null,
+        "acsc_week": null,
+        "page": 0,
+        "selected": null,
+        "detail": "timeline1: 2569-01 · 20"
+      }
+    },
+    {
+      "test": "tab-state-retained",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "reload-state",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "history",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "browser-download",
+      "status": "PASS",
+      "detail": "adidur_tab1_2558-2569_def9a9bb91.csv"
+    },
+    {
+      "test": "reset",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "test": "console-errors",
+      "status": "PASS",
+      "detail": []
+    }
+  ],
+  "console_errors": []
+}

@@ -6,7 +6,7 @@
 |---|---|---|---|---|
 | Pipeline | `.venv/bin/python scripts/build_db.py --input Datasets --output data/adidur.db` | รันซ้ำไม่เปลี่ยนต้นฉบับ PK/FK ใช้ได้ | สร้างซ้ำหลายรอบ 8.0–8.4วินาที ทุก hash เดิม integrity/FKผ่าน | ผ่าน |
 | Reference | `.venv/bin/python scripts/expected_values.py data/adidur.db` | 29 assertions E01–E24 ที่มีจริง | 25ผ่าน 4ไม่ผ่าน exit1 | ไม่ผ่านครบ |
-| pytest | `.venv/bin/python -m pytest -q --junitxml=data/pytest-results.xml` | 57 tests | 53ผ่าน 4ไม่ผ่าน 4.70วินาที ไม่ skip/xfail | ไม่ผ่านครบ |
+| pytest | `.venv/bin/python -m pytest -q --junitxml=data/pytest-results.xml` | 57 tests | 53ผ่าน 4ไม่ผ่าน 1.66วินาที ไม่ skip/xfail | ไม่ผ่านครบ |
 | App | `.venv/bin/python -m app.app` | ให้บริการจริง | health status ok, AFNC17726; browser เปิดครบ4แท็บ | ผ่าน |
 | UI | `.venv/bin/python scripts/browser_check.py` | 3ขนาด ×2โหมด หน้าเปิด/แท็บ1 ไม่มี overflow | ดู tests/artifacts/browser-results.json และภาพ PNG รุ่นล่าสุด | ผลตาม JSON |
 
@@ -42,5 +42,7 @@ E01, E04–E08, E10–E15, E17–E21, E23–E24 และ E22 ฝั่ง AFNC 
 - การเข้าถึงคู่มือ Render ปัจจุบันถูกHTTP403; ยังไม่deploy/push และไม่อ้างว่าสำเร็จ
 - ไม่ถือว่า Definition of Done ทั้งหมดผ่าน เพราะมีreference mismatches4ข้อ ต้องเทียบสคริปต์/รายการ56เดิมก่อนยืนยันเลขอ้างอิง
 
-## ผล browser รอบล่าสุดก่อนแพ็ก
-viewport12กรณีผ่าน; แท็บ2–4, year/monthdrill, tabstate, reload/history, reset, downloadผ่าน; จำนวนกราฟแท็บ1มี race ระหว่างกำลังmount (ตรวจสองครั้งได้ต่างกัน) และยังพบ pageerror Plotly axis scaling4ครั้ง จึงไม่อ้างconsoleผ่าน ดูbrowser-results.json สถานะจริง ไม่อ้างDoDครบ
+## ผล browser สุดท้ายหลังแก้และแพ็ก
+`python scripts/browser_check.py` exit0: **24/24 ผ่าน** viewport12กรณีและทุกแท็บแสดงกราฟครบ, year/monthdrill, tabstate, reload/history, reset, download, consoleไม่มีerror แก้ขั้นสุดท้ายให้ Graphมีheightชัดเจนและresponsiveauto ภาพทุกใบถูกสร้างใหม่จากรุ่นนี้ ดู tests/artifacts/browser-results.json ไม่รวมถึงอุปกรณ์จริง/ทุกcombination
+
+pytestรอบสุดท้าย53ผ่าน4ไม่ผ่านใน1.66วินาที ไม่เปลี่ยนexpectedหรือdisableassertions สถานะreference mismatchยังคงเดิม

@@ -25,7 +25,8 @@ with sync_playwright() as p:
     page.on('pageerror',lambda e:errors.append(str(e)))
     page.on('console',lambda m:errors.append({'message':m.text,'url':page.url}) if m.type=='error' else None)
     for tab,count in [('1',3),('2',5),('3',4),('4',0)]:
-        page.goto('http://127.0.0.1:8050/'+encode(tab,defaults()));page.locator('h1').wait_for();page.wait_for_timeout(900)
+        page.goto('http://127.0.0.1:8050/'+encode(tab,defaults()));page.locator('h1').wait_for();page.wait_for_timeout(1800)
+        if count:page.wait_for_function('(n) => document.querySelectorAll(".js-plotly-plot").length === n',arg=count)
         record('tab-'+tab,page.locator('.js-plotly-plot').count()==count,{'graphs':page.locator('.js-plotly-plot').count(),'overflow':page.evaluate('document.documentElement.scrollWidth>window.innerWidth')})
         page.screenshot(path=str(OUT/f'1280-light-tab{tab}-all.png'),full_page=True)
     page.goto('http://127.0.0.1:8050/?tab=1');page.locator('.js-plotly-plot').first.wait_for();page.wait_for_timeout(700)

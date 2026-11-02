@@ -60,3 +60,5 @@
 - FR-06: URLroundtrip/up unitผ่าน และ browseryear/month/tab/reload/history/reset/export ตรวจจริง ดู browser-results.json
 - NFR-02: viewportและโหมดในbrowser-results.json; ไม่อ้างอุปกรณ์จริง
 - C3.5 optional ไม่ทำ
+
+Browserสุดท้าย24/24ผ่าน consoleไม่มีerror หลังแก้ขนาดGraph ดูbrowser-results.json; reference4ข้อยังไม่ผ่านตามTEST_REPORT

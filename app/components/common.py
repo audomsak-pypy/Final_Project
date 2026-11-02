@@ -36,7 +36,7 @@ def kpi(label,value,unit,source,period,sub=None):
     return html.Div([html.P(label,className='eyebrow'),html.Div(value,className='kpi-value'),html.Div(unit),html.Small(f'{source} · {period}'),html.P(sub,className='muted') if sub else None],className='kpi')
 def panel(title,children,note=None,wide=False):
     return html.Section([html.H3(title),html.P(note,className='scope') if note else None,* (children if isinstance(children,list) else [children])],className='panel'+(' wide' if wide else ''))
-def graph(code,figure):return dcc.Graph(id={'type':'graph','code':code},figure=figure,config={'displayModeBar':False,'responsive':True},responsive=True)
+def graph(code,figure):return dcc.Graph(id={'type':'graph','code':code},figure=figure,config={'displayModeBar':False,'responsive':True},responsive='auto',style={'height':str(figure.layout.height or 390)+'px','width':'100%'})
 def download(tab,states,label='ดาวน์โหลดผลตามตัวกรอง CSV'):
     return html.A(label,href=f'/download/filtered/{tab}.csv'+encode(tab,states),className='download',download='')
 def table(frame,tab,s,columns=None,source=None):

@@ -14,3 +14,5 @@
 - ใช้ Dash 3.2.0 / Plotly 6.3.1 / Pandas 2.3.3 ที่ตรึงใน requirements การตรวจ browser พบ nested component list และแก้โดย flatten children
 - C3.5 แผนที่เป็นส่วนเสริม ไม่ทำในรุ่นนี้; ไม่อ้างว่าทดสอบ iPad จริงหรือ deploy สำเร็จ
 - การเข้าถึงเอกสาร https://render.com/docs/deploy-plotly-dash ถูก policy ตอบ 403 ในเครื่องนี้ จึงยังไม่ได้ตรวจคู่มือบริการฉบับปัจจุบัน การตั้งค่า Render เป็น recipe ที่ต้องตรวจอีกรอบก่อน publish ไม่ใช่ deployment สำเร็จ
+
+- แก้ Plotly axis scaling โดยให้ dcc.Graph ใช้ขนาดheightชัดเจน (responsive auto + config responsive) แทนการบังคับ responsiveที่ล้างheight; heatmapกำหนดพื้นที่label/colorbarชัดเจน การตรวจเฉพาะแท็บ2หลังแก้ได้5กราฟไม่มีpageerror ดู tests/artifacts/heatmap-final.json
