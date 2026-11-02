@@ -6,6 +6,18 @@
 
 > **สถานะการตรวจรับ:** Browser ผ่าน **24/24 กรณี** และ pytest ผ่าน **59 จาก 63 ข้อ** ยังมี 4 assertions ที่ไม่ตรงค่าอ้างอิงเรื่องข่าว AI กฎที่ใช้อยู่คำนวณได้ 52 โพสต์ เทียบกับ 56 ในเอกสาร จึงยังไม่ถือว่าผ่าน Definition of Done ครบทั้งหมด ดู [รายงานทดสอบ](docs/TEST_REPORT.md) และ [เหตุผลการตัดสินใจ](docs/DECISIONS.md)
 
+## สร้าง Dashboard ออนไลน์จาก README
+
+**สำหรับผู้ที่ยังไม่ได้ deploy:** โค้ดและ configuration พร้อมบน branch `SU` แล้ว การสร้างเว็บต้องยืนยันผ่านบัญชี Render ของคุณหนึ่งครั้ง
+
+[**เริ่มสร้าง Dashboard บน Render**](https://dashboard.render.com/web/new)
+
+1. เข้าสู่ระบบ Render แล้วเลือก repository `audomsak-pypy/Final_Project` หรือ Public Git Repository URL `https://github.com/audomsak-pypy/Final_Project`
+2. เลือก branch **SU** และแผน **Free** ใช้ค่าพร้อมคัดลอกใน [คู่มือ deploy](docs/DEPLOY.md#วิธีผ่านบัญชี-render) หรือสร้างผ่าน **New → Blueprint** โดยเลือก branch **SU** เพื่ออ่าน `render.yaml`
+3. ยืนยันสร้างบริการ รอ Render แสดงสถานะ **Live** แล้วกด URL ที่ Render ออกให้เพื่อเปิด Dashboard
+
+ปุ่มด้านบนเปิดหน้าสร้างเว็บของ Render **ยังไม่ใช่ลิงก์ Dashboard ที่เผยแพร่แล้ว** เมื่อมีบริการจริงจึงจะใส่ปุ่มเปิดเว็บโดยตรงได้ ไม่ต้องส่ง API key ในแชต หากต้องการให้ agent สร้างบริการแทน ใช้ช่องลับตาม [วิธี API](docs/DEPLOY.md#ให้-agent-เผยแพร่ผ่าน-api)
+
 ## ความสามารถของเว็บไซต์
 
 | หน้า | สิ่งที่สำรวจได้ |
