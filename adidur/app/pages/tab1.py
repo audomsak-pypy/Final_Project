@@ -1,4 +1,4 @@
-﻿"""tab1.py — แท็บ 1: AI และภัยออนไลน์ในไทย (AIID + AFNC + ACSC)"""
+﻿"""tab1.py — แท็บ 1: AI และภัยออนไลน์ในไทย (แยกส่วนตัวกรองคงที่และส่วนแสดงผลไดนามิก)"""
 from dash import html, dcc
 import app.queries as q
 import app.figures as f
@@ -10,37 +10,22 @@ from app.components.filter_bar import render_active_chips
 from app.components.evidence_table import render_evidence_table_t1
 from app.components.note_box import render_findings_and_limitations, render_why_and_definitions_section
 
-def render_tab1_content(con, state, is_dark=False):
-    # Queries
-    k1_1 = q.get_k1_1(con, state)
-    k1_2 = q.get_k1_2(con, state)
-    k1_3_4 = q.get_k1_3_4(con, state)
-    df_aiid = q.get_c1_1(con, state)
-    df_afnc = q.get_c1_2(con, state)
-    df_cat = q.get_c1_3(con, state)
-    cards_data = q.get_c1_4(con, state)
-    df_acsc = q.get_c1_5_6(con, state)
-    df_t1 = q.get_t1(con, state)
+def render_tab1_layout(con=None, initial_state=None):
+    state = initial_state or {}
+    y0 = state.get('y0', 2015)
+    y1 = state.get('y1', 2026)
 
-    # Question Banner
+    # 1. Question Banner
     question_banner = html.Div([
         html.Div("คำถามหลัก: เหตุการณ์ Deepfake ที่บันทึกทั่วโลก และข่าวเท็จเกี่ยวกับ AI ในไทย มีแนวโน้มและสร้างความเสียหายอย่างไร",
                  className="question-text")
     ], className="question-banner")
 
-    # Filter Controls
-    y0 = state.get('y0', 2015)
-    y1 = state.get('y1', 2026)
-    year = state.get('year')
-    month = state.get('month')
-    cat = state.get('category')
-    imp = state.get('imp')
-    inc_suspect = state.get('inc_suspect', True)
-
+    # 2. Filter Panel (Persistent IDs)
     filter_panel = html.Div([
         html.Div([
             html.Div([
-                html.Label("ช่วงปี (พ.ศ.)", className="filter-label"),
+                html.Label("ช่วงปี (พ.ศ.) · 2558–2569", className="filter-label"),
                 dcc.RangeSlider(
                     id='tab1-filter-year-range',
                     min=2015, max=2026, step=1,
@@ -57,7 +42,7 @@ def render_tab1_content(con, state, is_dark=False):
                         {'label': 'มีคำบ่งชี้ว่าใช้ AI สร้างสื่อ (ต้องตรวจสอบ)', 'value': 'media_evidence'},
                         {'label': 'กล่าวถึง AI', 'value': 'mention'}
                     ],
-                    value=state.get('levels') or ['mention', 'media_evidence'],
+                    value=['mention', 'media_evidence'],
                     multi=True,
                     clearable=False
                 )
@@ -74,7 +59,7 @@ def render_tab1_content(con, state, is_dark=False):
                         {'label': 'ผลิตภัณฑ์สุขภาพ', 'value': 'ผลิตภัณฑ์สุขภาพ'},
                         {'label': 'อาชญากรรมออนไลน์', 'value': 'อาชญากรรมออนไลน์'}
                     ],
-                    value=cat if cat else 'ALL',
+                    value='ALL',
                     clearable=False
                 )
             ], style={'flex': '1.2', 'minWidth': '180px'}),
@@ -87,7 +72,7 @@ def render_tab1_content(con, state, is_dark=False):
                         {'label': 'เฉพาะที่แอบอ้าง', 'value': 1},
                         {'label': 'ไม่แอบอ้าง', 'value': 0}
                     ],
-                    value=imp if imp is not None else 'ALL',
+                    value='ALL',
                     clearable=False
                 )
             ], style={'flex': '1', 'minWidth': '140px'}),
@@ -96,11 +81,41 @@ def render_tab1_content(con, state, is_dark=False):
                 dcc.Checklist(
                     id='tab1-filter-suspect',
                     options=[{'label': ' รวมสัปดาห์ 16–22 ส.ค. 2569', 'value': 'inc'}],
-                    value=['inc'] if inc_suspect else []
+                    value=['inc']
                 )
             ], style={'flex': '1.5', 'minWidth': '200px'}),
         ], className="filter-row"),
     ], className="filter-panel")
+
+    # Dynamic Area
+    dynamic_area = html.Div(id='tab1-dynamic-area')
+
+    return html.Div([
+        question_banner,
+        filter_panel,
+        dynamic_area,
+        render_why_and_definitions_section()
+    ])
+
+def render_tab1_dynamic(con, state, is_dark=False):
+    # Queries
+    k1_1 = q.get_k1_1(con, state)
+    k1_2 = q.get_k1_2(con, state)
+    k1_3_4 = q.get_k1_3_4(con, state)
+    df_aiid = q.get_c1_1(con, state)
+    df_afnc = q.get_c1_2(con, state)
+    df_cat = q.get_c1_3(con, state)
+    cards_data = q.get_c1_4(con, state)
+    df_acsc = q.get_c1_5_6(con, state)
+    df_t1 = q.get_t1(con, state)
+
+    y0 = state.get('y0', 2015)
+    y1 = state.get('y1', 2026)
+    year = state.get('year')
+    month = state.get('month')
+    cat = state.get('category')
+    imp = state.get('imp')
+    inc_suspect = state.get('inc_suspect', True)
 
     # Active Chips
     chips = []
@@ -153,7 +168,7 @@ def render_tab1_content(con, state, is_dark=False):
     # Featured News Cards (C1.4)
     news_grid = render_featured_news_grid(cards_data)
 
-    # Charts Grid
+    # Figures
     fig_c1_1_2 = f.make_c1_1_2_figure(df_aiid, df_afnc, is_dark=is_dark, state=state)
     fig_c1_3 = f.make_c1_3_figure(df_cat, is_dark=is_dark)
     fig_c1_5_6 = f.make_c1_5_6_figure(df_acsc, is_dark=is_dark, state=state)
@@ -176,7 +191,7 @@ def render_tab1_content(con, state, is_dark=False):
         ], className="chart-card")
     ], style={'marginBottom': '20px'})
 
-    # Evidence Table (T1)
+    # Evidence Table
     table_section = html.Div([
         html.Div([
             html.H3("T1 ตารางหลักฐาน: ข่าว AFNC และเหตุการณ์ Deepfake ในช่วงที่เลือก", className="section-title"),
@@ -188,7 +203,6 @@ def render_tab1_content(con, state, is_dark=False):
     ], className="evidence-section")
 
     # Dynamic Summary Text (Findings & Limitations)
-    diff_pct_aiid = "-35.1%"
     findings = [
         f"1. ในช่วงปี พ.ศ. {to_be(y0)}–{to_be(y1)} มีเหตุการณ์ Deepfake ทั่วโลกถูกบันทึกใน AIID รวม {k1_1:,} เรื่อง",
         f"2. ในไทย ศูนย์ต่อต้านข่าวปลอม (AFNC) ตัดสินข่าวเท็จที่เข้าเกณฑ์เกี่ยวกับ AI รวม {k1_2['total']:,} โพสต์ "
@@ -210,11 +224,7 @@ def render_tab1_content(con, state, is_dark=False):
         html.Ul([html.Li(x) for x in limitations])
     )
 
-    why_and_def = render_why_and_definitions_section()
-
     return html.Div([
-        question_banner,
-        filter_panel,
         chips_bar,
         breadcrumb_bar,
         kpi_grid,
@@ -222,6 +232,5 @@ def render_tab1_content(con, state, is_dark=False):
         charts_row1,
         charts_row2,
         table_section,
-        findings_box,
-        why_and_def
+        findings_box
     ])

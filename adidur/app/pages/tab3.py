@@ -1,4 +1,4 @@
-﻿"""tab3.py — แท็บ 3: เสรีภาพอินเทอร์เน็ต (FOTN + AFNC + EUvsDisinfo)"""
+﻿"""tab3.py — แท็บ 3: เสรีภาพอินเทอร์เน็ต (แยกส่วนตัวกรองคงที่และส่วนแสดงผลไดนามิก)"""
 from dash import html, dcc
 import app.queries as q
 import app.figures as f
@@ -8,27 +8,15 @@ from app.components.breadcrumb import render_breadcrumb
 from app.components.filter_bar import render_active_chips
 from app.components.note_box import render_findings_and_limitations, render_why_and_definitions_section
 
-def render_tab3_content(con, state, is_dark=False):
-    # Queries
-    k3 = q.get_k3(con, state)
-    df_c3_1 = q.get_c3_1(con, state)
-    df_c3_2 = q.get_c3_2(con, state, level=state.get('level', 'group'))
-    df_c3_3 = q.get_c3_3(con)
-    df_c3_4 = q.get_c3_4(con)
-    df_c3_5 = q.get_c3_5(con, fy=state.get('fy', 2024))
-
+def render_tab3_layout(con=None, initial_state=None):
+    state = initial_state or {}
     fy = state.get('fy', 2024)
-    iso3 = state.get('iso3', 'THA')
-    add_rus = state.get('add_rus', False)
-    level = state.get('level', 'group')
 
-    # Question Banner
     question_banner = html.Div([
         html.Div("คำถามหลัก: ไทยมีคะแนนเสรีภาพอินเทอร์เน็ตอยู่ตรงไหนเมื่อเทียบกับประเทศอื่น และในช่วงเดียวกัน AFNC เผยแพร่ผลตรวจข่าวจำนวนเท่าไร",
                  className="question-text")
     ], className="question-banner")
 
-    # Filter Controls
     filter_panel = html.Div([
         html.Div([
             html.Div([
@@ -46,13 +34,34 @@ def render_tab3_content(con, state, is_dark=False):
                 dcc.Checklist(
                     id='tab3-filter-rus',
                     options=[{'label': ' เพิ่มรัสเซีย (RUS) เพื่อเปรียบเทียบ', 'value': 'add_rus'}],
-                    value=['add_rus'] if add_rus else []
+                    value=[]
                 )
             ], style={'flex': '1.5', 'minWidth': '220px', 'marginTop': '18px'}),
         ], className="filter-row"),
     ], className="filter-panel")
 
-    # Active Chips
+    dynamic_area = html.Div(id='tab3-dynamic-area')
+
+    return html.Div([
+        question_banner,
+        filter_panel,
+        dynamic_area,
+        render_why_and_definitions_section()
+    ])
+
+def render_tab3_dynamic(con, state, is_dark=False):
+    k3 = q.get_k3(con, state)
+    df_c3_1 = q.get_c3_1(con, state)
+    df_c3_2 = q.get_c3_2(con, state, level=state.get('level', 'group'))
+    df_c3_3 = q.get_c3_3(con)
+    df_c3_4 = q.get_c3_4(con)
+    df_c3_5 = q.get_c3_5(con, fy=state.get('fy', 2024))
+
+    fy = state.get('fy', 2024)
+    iso3 = state.get('iso3', 'THA')
+    add_rus = state.get('add_rus', False)
+    level = state.get('level', 'group')
+
     chips = [
         {'label': f"ปีข้อมูล: {to_be(fy)} (รายงาน {to_be(fy)+1})", 'id': 'tab3-chip-fy'},
         {'label': "กลุ่ม: อาเซียน (8 ประเทศ)", 'id': 'tab3-chip-group'}
@@ -64,7 +73,6 @@ def render_tab3_content(con, state, is_dark=False):
 
     chips_bar = render_active_chips(chips, clear_btn_id='tab3-btn-clear')
 
-    # Breadcrumbs
     bread_items = [("อาเซียน", level == 'group')]
     if level in ('country', 'year') and iso3:
         bread_items.append((f"ประเทศ {iso3}", level == 'country'))
@@ -73,7 +81,6 @@ def render_tab3_content(con, state, is_dark=False):
 
     breadcrumb_bar = render_breadcrumb(bread_items, back_btn_id='tab3-btn-back', show_back=(level != 'group'))
 
-    # Rank calculation in ASEAN
     rank_in_group = "-"
     n_in_group = 8
     if not df_c3_1.empty:
@@ -82,7 +89,6 @@ def render_tab3_content(con, state, is_dark=False):
             rank_in_group = tha_row['rank_in_group'].iloc[0]
             n_in_group = tha_row['n_in_group'].iloc[0]
 
-    # KPI Cards
     kpi_grid = html.Div([
         render_kpi_card("K3.1 คะแนนเสรีภาพของไทย", f"{k3['total_score']}", "คะแนน / 100",
                         f"อันดับ {rank_in_group} จาก {n_in_group} ประเทศในกลุ่ม", badge="Freedom House"),
@@ -94,9 +100,11 @@ def render_tab3_content(con, state, is_dark=False):
                         "Freedom on the Net Edition"),
     ], className="kpi-grid")
 
-    # Charts C3.1 & C3.2
     fig_c3_1 = f.make_c3_1_figure(df_c3_1, is_dark=is_dark)
     fig_c3_2 = f.make_c3_2_figure(df_c3_2, is_dark=is_dark, level=level)
+    fig_c3_3 = f.make_c3_3_figure(df_c3_3, is_dark=is_dark)
+    fig_c3_4 = f.make_c3_4_figure(df_c3_4, is_dark=is_dark)
+    fig_c3_5 = f.make_c3_5_figure(df_c3_5, is_dark=is_dark)
 
     charts_row1 = html.Div([
         html.Div([
@@ -109,10 +117,6 @@ def render_tab3_content(con, state, is_dark=False):
         ], className="chart-card", style={'flex': '1.2'}),
     ], className="charts-grid-2")
 
-    # Context Charts C3.3 & C3.4
-    fig_c3_3 = f.make_c3_3_figure(df_c3_3, is_dark=is_dark)
-    fig_c3_4 = f.make_c3_4_figure(df_c3_4, is_dark=is_dark)
-
     charts_row2 = html.Div([
         html.Div([
             html.Div("ตัวกรองประเทศไม่มีผลกับฝั่ง AFNC · ข้อมูลไทย 2562 มีเพียง 3 เดือนสุดท้าย", className="chart-disclaimer-pill"),
@@ -124,15 +128,12 @@ def render_tab3_content(con, state, is_dark=False):
         ], className="chart-card", style={'flex': '1'}),
     ], className="charts-grid-2")
 
-    # Map C3.5
-    fig_c3_5 = f.make_c3_5_figure(df_c3_5, is_dark=is_dark)
     map_section = html.Div([
         html.Div([
             dcc.Graph(id='tab3-graph-c3-5', figure=fig_c3_5, config={'responsive': True, 'displayModeBar': False})
         ], className="chart-card")
     ], style={'marginBottom': '20px'})
 
-    # Findings & Limitations
     findings = [
         f"1. ปีข้อมูลล่าสุด พ.ศ. 2567 (รายงานฉบับ 2568) ไทยได้คะแนนรวม 39 จาก 100 คะแนน จัดอยู่ในสถานะ 'ไม่เสรี'",
         f"2. ในกลุ่ม 8 ประเทศอาเซียนที่มีข้อมูล ไทยอยู่อันดับ 6 (ตามหลังฟิลิปปินส์ 61, มาเลเซีย 60, สิงคโปร์ 53, อินโดนีเซีย 48, กัมพูชา 42 และนำหน้าเวียดนาม 22, เมียนมา 9)",
@@ -150,17 +151,12 @@ def render_tab3_content(con, state, is_dark=False):
         html.Ul([html.Li(x) for x in limitations])
     )
 
-    why_and_def = render_why_and_definitions_section()
-
     return html.Div([
-        question_banner,
-        filter_panel,
         chips_bar,
         breadcrumb_bar,
         kpi_grid,
         charts_row1,
         charts_row2,
         map_section,
-        findings_box,
-        why_and_def
+        findings_box
     ])

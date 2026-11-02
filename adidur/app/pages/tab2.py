@@ -1,4 +1,4 @@
-﻿"""tab2.py — แท็บ 2: ประเด็นข้อมูลบิดเบือนต่างประเทศกับไทย (EUvsDisinfo + AFNC + AIID)"""
+﻿"""tab2.py — แท็บ 2: ประเด็นข้อมูลบิดเบือนต่างประเทศกับไทย (แยกส่วนตัวกรองคงที่และส่วนแสดงผลไดนามิก)"""
 from dash import html, dcc
 import app.queries as q
 import app.figures as f
@@ -29,27 +29,16 @@ THEME_TH_DICT = {
     'conspiracy': 'ทฤษฎีสมคบคิด'
 }
 
-def render_tab2_content(con, state, is_dark=False):
-    # Queries
-    k2 = q.get_k2(con, state)
-    df_c2_1 = q.get_c2_1(con, state)
-    df_c2_2 = q.get_c2_2(con, state)
+def render_tab2_layout(con=None, initial_state=None):
+    state = initial_state or {}
+    y0 = state.get('y0', 2020)
+    y1 = state.get('y1', 2022)
     theme = state.get('theme', 'covid')
-    df_c2_3 = q.get_c2_3(con, state)
-    df_c2_4 = q.get_c2_4(con, state)
-    df_c2_5 = q.get_c2_5(con, state)
-    df_t2 = q.get_t2(con, state)
 
-    # Question Banner
     question_banner = html.Div([
         html.Div("คำถามหลัก: ประเด็นใดปรากฏร่วมกัน และประเด็นใดมีสัดส่วนต่างกัน ระหว่าง EUvsDisinfo กับข่าวเท็จของ AFNC",
                  className="question-text")
     ], className="question-banner")
-
-    # Filter Controls
-    y0 = state.get('y0', 2020)
-    y1 = state.get('y1', 2022)
-    year = state.get('year')
 
     filter_panel = html.Div([
         html.Div([
@@ -76,6 +65,29 @@ def render_tab2_content(con, state, is_dark=False):
         html.Div("หมายเหตุ: ข้อมูล EUvsDisinfo มีถึง 1 ส.ค. 2566 · ปี 2567+ ฝั่ง EU จะไม่มีข้อมูล · 1 เรื่องอยู่ได้หลายประเด็น ผลรวมอาจเกิน 100%",
                  style={'fontSize': '12px', 'color': 'var(--muted)', 'marginTop': '8px'})
     ], className="filter-panel")
+
+    dynamic_area = html.Div(id='tab2-dynamic-area')
+
+    return html.Div([
+        question_banner,
+        filter_panel,
+        dynamic_area,
+        render_why_and_definitions_section()
+    ])
+
+def render_tab2_dynamic(con, state, is_dark=False):
+    k2 = q.get_k2(con, state)
+    df_c2_1 = q.get_c2_1(con, state)
+    df_c2_2 = q.get_c2_2(con, state)
+    theme = state.get('theme', 'covid')
+    df_c2_3 = q.get_c2_3(con, state)
+    df_c2_4 = q.get_c2_4(con, state)
+    df_c2_5 = q.get_c2_5(con, state)
+    df_t2 = q.get_t2(con, state)
+
+    y0 = state.get('y0', 2020)
+    y1 = state.get('y1', 2022)
+    year = state.get('year')
 
     # Active Chips
     chips = []
@@ -104,9 +116,12 @@ def render_tab2_content(con, state, is_dark=False):
                         f"ช่วง พ.ศ. {to_be(y0)}–{to_be(y1)}", badge="AIID"),
     ], className="kpi-grid", style={'gridTemplateColumns': 'repeat(3, 1fr)'})
 
-    # Heatmaps C2.1 & C2.2
+    # Figures
     fig_c2_1 = f.make_c2_1_figure(df_c2_1, is_dark=is_dark)
     fig_c2_2 = f.make_c2_2_figure(df_c2_2, is_dark=is_dark)
+    fig_c2_3 = f.make_c2_3_figure(df_c2_3, theme_th=THEME_TH_DICT.get(theme, theme), is_dark=is_dark)
+    fig_c2_4 = f.make_c2_4_figure(df_c2_4, is_dark=is_dark)
+    fig_c2_5 = f.make_c2_5_figure(df_c2_5, is_dark=is_dark)
 
     heatmaps_row = html.Div([
         html.Div([
@@ -118,11 +133,6 @@ def render_tab2_content(con, state, is_dark=False):
             dcc.Graph(id='tab2-graph-c2-2', figure=fig_c2_2, config={'responsive': True, 'displayModeBar': False})
         ], className="chart-card", style={'flex': '1'}),
     ], className="charts-grid-2")
-
-    # Trend C2.3 & C2.4
-    fig_c2_3 = f.make_c2_3_figure(df_c2_3, theme_th=THEME_TH_DICT.get(theme, theme), is_dark=is_dark)
-    fig_c2_4 = f.make_c2_4_figure(df_c2_4, is_dark=is_dark)
-    fig_c2_5 = f.make_c2_5_figure(df_c2_5, is_dark=is_dark)
 
     trends_row = html.Div([
         html.Div([
@@ -139,7 +149,7 @@ def render_tab2_content(con, state, is_dark=False):
         ], className="chart-card")
     ], style={'marginBottom': '20px'})
 
-    # Evidence Table (T2)
+    # Evidence Table
     table_section = html.Div([
         html.Div([
             html.H3(f"T2 ตารางรายการหลักฐานในประเด็น: {THEME_TH_DICT.get(theme, theme)}", className="section-title"),
@@ -150,7 +160,6 @@ def render_tab2_content(con, state, is_dark=False):
         render_evidence_table_t2(df_t2)
     ], className="evidence-section")
 
-    # Dynamic Summary Text (Findings & Limitations)
     findings = [
         f"1. ในช่วงเริ่มต้น พ.ศ. 2563–2565 ประเด็นโควิด-19 ปรากฏร่วมกันทั้งสองแหล่ง "
         f"(EUvsDisinfo พบ 629 เรื่อง คิดเป็น 13.0% และ AFNC พบ 657 ข่าว คิดเป็น 18.5%)",
@@ -170,11 +179,7 @@ def render_tab2_content(con, state, is_dark=False):
         html.Ul([html.Li(x) for x in limitations])
     )
 
-    why_and_def = render_why_and_definitions_section()
-
     return html.Div([
-        question_banner,
-        filter_panel,
         chips_bar,
         breadcrumb_bar,
         kpi_grid,
@@ -182,6 +187,5 @@ def render_tab2_content(con, state, is_dark=False):
         trends_row,
         context_row,
         table_section,
-        findings_box,
-        why_and_def
+        findings_box
     ])
