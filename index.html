@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Adidur — จริงหรือเฟค</title>
+<meta name="description" content="แดชบอร์ด AI ข่าวปลอม และภัยออนไลน์: มองโลก เปรียบเทียบไทย">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@700;800&family=Sarabun:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root { --bg:#FFF8EC; --ink:#1C0F08; --muted:#6B5244; --accent:#B8300E; --accent2:#D9700C; --glow:#F7C33C; --card:#fff; --line:#EADCC8; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#120A06; --ink:#FBEFD9; --muted:#C9B09A; --accent:#F2643A; --accent2:#F5A23A; --glow:#FCD25A; --card:#1E120C; --line:#3B2719; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:grid; place-items:center; padding:24px; color:var(--ink);
+    font-family:"Sarabun","Leelawadee UI",Tahoma,sans-serif; background:var(--bg);
+    background-image: radial-gradient(900px 400px at 10% -10%, color-mix(in srgb, var(--glow) 30%, transparent), transparent 60%); }
+  .card { max-width:560px; width:100%; background:var(--card); border:1px solid var(--line); border-radius:22px; padding:36px 28px;
+    box-shadow:0 8px 28px rgba(60,30,10,.12); text-align:center; }
+  h1 { font-family:"Noto Sans Thai",sans-serif; font-weight:800; font-size:clamp(2.4rem,10vw,3.6rem); letter-spacing:.08em; margin:0;
+    background:linear-gradient(90deg,var(--accent),var(--accent2),var(--glow)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .words { display:inline-block; margin:14px 0 6px; padding:6px 22px; border-radius:16px; font-family:"Noto Sans Thai",sans-serif; font-weight:800;
+    font-size:1.6rem; background:linear-gradient(135deg,var(--glow),var(--accent2)); color:#1C0F08; }
+  p { color:var(--muted); margin:10px 0; }
+  .btn { display:inline-block; margin-top:14px; padding:12px 28px; border-radius:999px; background:var(--accent); color:var(--bg);
+    font-weight:700; text-decoration:none; box-shadow:0 6px 18px color-mix(in srgb, var(--accent) 40%, transparent); }
+  .small { font-size:.88rem; }
+  a.link { color:var(--accent); }
+  [hidden] { display:none; }
+</style>
+</head>
+<body>
+<main class="card">
+  <h1>Adidur</h1>
+  <div class="words">จริง หรือ เฟค</div>
+  <p>AI ข่าวปลอม และภัยออนไลน์: มองโลก เปรียบเทียบไทย</p>
+
+  <div id="ready" hidden>
+    <p>กำลังพาไปที่ Dashboard…</p>
+    <a id="go" class="btn" href="#">เปิด Dashboard</a>
+    <p class="small">ครั้งแรกอาจรอประมาณ 1 นาที เพราะเซิร์ฟเวอร์ฟรีหลับเมื่อไม่มีคนใช้</p>
+  </div>
+  <div id="soon" hidden>
+    <p>Dashboard กำลังเตรียมเปิดใช้งาน กรุณากลับมาใหม่อีกครั้ง</p>
+    <a class="link" href="https://github.com/audomsak-pypy/Final_Project">ดูโค้ดและเอกสารโครงงาน</a>
+  </div>
+</main>
+<script>
+  // ลิงก์ของ Dashboard ที่ deploy แล้ว (Dash ต้องรันบนเซิร์ฟเวอร์ Python จึงอยู่บน GitHub Pages โดยตรงไม่ได้)
+  var DASHBOARD_URL = "";
+
+  if (DASHBOARD_URL) {
+    var target = DASHBOARD_URL.replace(/\/$/, "") + "/" + window.location.search; // ส่งต่อ ?tab=… ไปด้วย
+    document.getElementById("go").href = target;
+    document.getElementById("ready").hidden = false;
+    setTimeout(function () { window.location.replace(target); }, 800);
+  } else {
+    document.getElementById("soon").hidden = false;
+  }
+</script>
+</body>
+</html>
